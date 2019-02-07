@@ -6,8 +6,8 @@ from sklearn.metrics import accuracy_score
 
 # importing dataset
 print('Importing datasets...')
-df_train = pd.read_csv('dataset/training.txt', header=None, sep=',')
-df_test = pd.read_csv('dataset/testing.txt', header=None, sep=',')
+df_train = pd.read_csv('../Library/dataset/training.txt', header=None, sep=',')
+df_test = pd.read_csv('../Library/dataset/testing.txt', header=None, sep=',')
 
 y_train = df_train[10]
 y_test = df_test[10]

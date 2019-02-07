@@ -16,8 +16,8 @@ print('Importing datasets...')
 class_labels = ['0','1','2','3','4','5','6','7','8','9']
 predictor_labels = ['S1','C1','S2','C2','S3','C3','S4','C4','S5','C5','CLASS']
 
-df_train = pd.read_csv('dataset/training.txt', header=None, sep=',')
-df_test = pd.read_csv('dataset/testing.txt', header=None, sep=',')
+df_train = pd.read_csv('../Library/dataset/training.txt', header=None, sep=',')
+df_test = pd.read_csv('../Library/dataset/testing.txt', header=None, sep=',')
 
 dataset = pd.concat([df_train, df_test])
 

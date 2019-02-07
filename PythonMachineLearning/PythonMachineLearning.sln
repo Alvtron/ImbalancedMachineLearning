@@ -7,6 +7,10 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LightGBM", "LightGBM\LightG
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "RandomForest", "RandomForest\RandomForest.pyproj", "{F567613B-1323-4A44-BF85-8D63BBCE1B53}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Library", "Library\Library.pyproj", "{C6283161-729F-4A65-9AB8-BED11CAD9EF3}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CatBoost", "CatBoost\CatBoost.pyproj", "{4970038C-1B86-46F4-8444-A47A97E35D57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +21,10 @@ Global
 		{A9766F97-0E6B-49CC-AC01-DBB45668E8DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F567613B-1323-4A44-BF85-8D63BBCE1B53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F567613B-1323-4A44-BF85-8D63BBCE1B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6283161-729F-4A65-9AB8-BED11CAD9EF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6283161-729F-4A65-9AB8-BED11CAD9EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4970038C-1B86-46F4-8444-A47A97E35D57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4970038C-1B86-46F4-8444-A47A97E35D57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
