@@ -26,7 +26,6 @@
   <ItemGroup>
     <Content Include="Dataset\testing.txt" />
     <Content Include="Dataset\training.txt" />
-    <Content Include="model.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dataset\" />

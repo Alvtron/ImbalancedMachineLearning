@@ -22,6 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="RandomForest.py" />
+    <Compile Include="RandomForestTuned.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dataset\" />

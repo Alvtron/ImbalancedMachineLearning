@@ -4,11 +4,10 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 
-
 # importing dataset
 print('Importing datasets...')
-df_train = pd.read_csv('training.txt', header=None, sep=',')
-df_test = pd.read_csv('testing.txt', header=None, sep=',')
+df_train = pd.read_csv('dataset/training.txt', header=None, sep=',')
+df_test = pd.read_csv('dataset/testing.txt', header=None, sep=',')
 
 y_train = df_train[10]
 y_test = df_test[10]
