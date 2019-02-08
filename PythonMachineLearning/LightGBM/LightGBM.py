@@ -48,7 +48,6 @@ parameters = {
     "learning_rate" : 0.05
 }
 
-
 # training
 print('Training...')
 num_round = 200
