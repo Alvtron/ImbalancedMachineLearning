@@ -1,13 +1,15 @@
+import math
 import numpy as np
-import lightgbm as lgb
 import pandas as pd
+import xgboost as xgb
 from Performance import plot_confusion_matrix
 from matplotlib import pyplot as plt
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
+from sklearn import datasets, linear_model
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 
 # importing dataset
-print('Importing datasets...')
+print('Importing dataset...')
 
 predictor_labels = ['S1','C1','S2','C2','S3','C3','S4','C4','S5','C5','CLASS']
 
@@ -36,35 +38,45 @@ y_test = df_test['CLASS']
 X_train = df_train.drop('CLASS', axis=1)
 X_test = df_test.drop('CLASS', axis=1)
 
-train_data = lgb.Dataset(X_train, label=y_train)
-test_data = lgb.Dataset(X_test, label=y_test, reference=train_data)
+dtrain = xgb.DMatrix(X_train, label=y_train)
+dtest = xgb.DMatrix(X_test, label=y_test)
 
 # Setting parameters
 print('Setting tuning parameters...')
-parameters = {
-    'objective': 'multiclass',
-    "num_class" : 10,
-    "num_leaves" : 60,
-    "learning_rate" : 0.05
-}
+param = {
+    'max_depth': 4,
+    'eta': 0.3,
+    'silent': True,
+    'objective': 'multi:softprob',
+    'num_class': 10}
 
+# 88.2547 %
+#param = {
+#    'max_depth': 4,
+#    'eta': 0.3,
+#    'silent': True,
+#    'objective': 'multi:softprob',
+#    'num_class': 10}
 
-# training
+param['nthread'] = 8
+param['eval_metric'] = 'auc'
+
+# Training model
 print('Training...')
-num_round = 200
-bst = lgb.train(parameters, train_data, num_round, verbose_eval=True)
+num_round = 1000
+bst = xgb.train(param, dtrain, num_round)
 
-# loading model
-#print('Loading model')
-#bst = lgb.Booster(model_file='model.txt')
+# Load model
+#bst = xgb.Booster({'nthread': 8})  # init model
+#bst.load_model('model.bin')  # load data
 
-# Saving model
-print('Saving model...')
-bst.save_model('model.txt')
+# save model
+#print('Saving model...')
+#bst.save_model('poker_xgboost.model')
 
-# Predicting
+# make the prediction using the resulting model
 print('Predicting...')
-y_pred = bst.predict(X_test)
+y_pred = bst.predict(dtest)
 
 # Converting from probabillity to class
 print('Converting probabillity chance to classes...')
@@ -72,7 +84,7 @@ y_pred = np.asarray([np.argmax(line) for line in y_pred])
 
 # Measuring accuracy
 print('Accuracy:')
-accuracy=accuracy_score(y_pred, y_test)
+accuracy=accuracy_score(y_pred,y_test)
 print(accuracy)
 
 print('Advanced metrics:')

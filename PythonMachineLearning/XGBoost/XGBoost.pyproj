@@ -2,15 +2,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>f567613b-1323-4a44-bf85-8d63bbce1b53</ProjectGuid>
+    <ProjectGuid>5e703f06-01f5-43f9-a97b-26298d7b6126</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RandomForest.py</StartupFile>
+    <StartupFile>XGBoost.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>RandomForest</Name>
-    <RootNamespace>RandomForest</RootNamespace>
+    <Name>XGBoost</Name>
+    <RootNamespace>XGBoost</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,8 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="RandomForest.py" />
-    <Compile Include="RandomForestTuned.py" />
+    <Compile Include="XGBoost.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.pyproj">

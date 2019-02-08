@@ -1,11 +1,11 @@
 import math
 import numpy as np
 import pandas as pd
+from Performance import plot_confusion_matrix
 from matplotlib import pyplot as plt
 from sklearn import datasets, linear_model
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
@@ -13,42 +13,46 @@ from sklearn.externals import joblib
 # importing dataset
 print('Importing datasets...')
 
-class_labels = ['0','1','2','3','4','5','6','7','8','9']
 predictor_labels = ['S1','C1','S2','C2','S3','C3','S4','C4','S5','C5','CLASS']
+
+class_labels = [0,1,2,3,4,5,6,7,8,9]
+
+class_descriptions = [
+    '0: Nothing in hand; not a recognized poker hand',
+    '1: One pair; one pair of equal ranks within five cards',
+    '2: Two pairs; two pairs of equal ranks within five cards',
+    '3: Three of a kind; three equal ranks within five cards',
+    '4: Straight; five cards, sequentially ranked with no gaps',
+    '5: Flush; five cards with the same suit',
+    '6: Full house; pair + different rank three of a kind',
+    '7: Four of a kind; four equal ranks within five cards',
+    '8: Straight flush; straight + flush',
+    '9: Royal flush; {Ace, King, Queen, Jack, Ten} + flush'
+    ]
 
 df_train = pd.read_csv('../Library/dataset/training.txt', header=None, sep=',')
 df_test = pd.read_csv('../Library/dataset/testing.txt', header=None, sep=',')
+df_test.columns = predictor_labels
+df_train.columns = predictor_labels
 
-dataset = pd.concat([df_train, df_test])
-
-# Load the Diabetes Housing dataset
-dataset.columns = predictor_labels
-
-print(dataset.head())
-
-print('Splitting the data into independent and dependent variables...')
-X = dataset.iloc[:,0:10].values
-y = dataset.iloc[:,10].values
-
-# create training and testing vars
-print('Creating training set and validation set...')
-split_fraction = 1/math.sqrt(len(X[0]))
-print(f'Splitting data with fraction {split_fraction}')
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = split_fraction, random_state = 21)
+y_train = df_train['CLASS']
+y_test = df_test['CLASS']
+X_train = df_train.drop('CLASS', axis=1)
+X_test = df_test.drop('CLASS', axis=1)
 
 # Creating tree
 print('Creating tree...')
 classifier = RandomForestClassifier(
     verbose = 2,
     n_jobs = -1,
+    random_state = 42,
     criterion = 'entropy',
-    n_estimators = 100,
-    max_features = 'sqrt',
+    n_estimators = 1800,
     max_depth = 30,
-    min_samples_split = 10,
-    min_samples_leaf = 1,
     bootstrap = False,
-    random_state = 42)
+    max_features = 'sqrt',
+    min_samples_leaf = 1,
+    min_samples_split = 10)
 
 # training
 print('Training...')
@@ -62,20 +66,16 @@ joblib.dump(classifier, 'randomforestmodel.pkl')
 print('Predicting...')
 y_pred = classifier.predict(X_test)
 
-# Creating confusion matrix
-print('Confusion matrix:')
-cm = confusion_matrix(y_test, y_pred)
-print(cm)
-
 # Measuring accuracy
 print('Accuracy:')
-accuracy=accuracy_score(y_pred,y_test)
+accuracy=accuracy_score(y_pred, y_test)
 print(accuracy)
 
-# Converting from probabillity to class
-print('Plotting results...')
+print('Advanced metrics:')
+print(classification_report(y_test, y_pred, target_names=class_descriptions))
 
-plt.scatter(y_test, y_pred)
-plt.xlabel("True Values")
-plt.ylabel("Predictions")
+# Plotting confusion matrix
+cnf_matrix = confusion_matrix(y_test, y_pred, labels=class_labels)
+plt.figure()
+plot_confusion_matrix(cnf_matrix, classes = class_labels, title = 'Confusion matrix, with normalization', normalize = True)
 plt.show()

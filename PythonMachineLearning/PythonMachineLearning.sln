@@ -11,6 +11,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Library", "Library\Library.
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CatBoost", "CatBoost\CatBoost.pyproj", "{4970038C-1B86-46F4-8444-A47A97E35D57}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "XGBoost", "XGBoost\XGBoost.pyproj", "{5E703F06-01F5-43F9-A97B-26298D7B6126}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,8 @@ Global
 		{C6283161-729F-4A65-9AB8-BED11CAD9EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4970038C-1B86-46F4-8444-A47A97E35D57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4970038C-1B86-46F4-8444-A47A97E35D57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E703F06-01F5-43F9-A97B-26298D7B6126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E703F06-01F5-43F9-A97B-26298D7B6126}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
