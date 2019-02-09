@@ -29,6 +29,9 @@
     <Content Include="Dataset\training.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dataset.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Performance.py">
       <SubType>Code</SubType>
     </Compile>
