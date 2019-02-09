@@ -7,8 +7,10 @@ from pprint import pprint
 from Performance import plot_confusion_matrix
 from matplotlib import pyplot as plt
 from sklearn import datasets, linear_model
+from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+from sklearn.utils import shuffle
 from sklearn.utils.class_weight import compute_class_weight
 
 predictor_labels = ['S1','C1','S2','C2','S3','C3','S4','C4','S5','C5','CLASS']
@@ -30,26 +32,42 @@ class_descriptions = [
 print('Importing dataset...')
 df_train = pd.read_csv('../Library/dataset/training.txt', header=None, sep=',')
 df_test = pd.read_csv('../Library/dataset/testing.txt', header=None, sep=',')
-df_test.columns = predictor_labels
-df_train.columns = predictor_labels
 
-print('Creating train data and test data...')
-y_train = df_train['CLASS']
-y_test = df_test['CLASS']
-X_train = df_train.drop('CLASS', axis=1)
-X_test = df_test.drop('CLASS', axis=1)
+dataset = pd.concat([df_train, df_test])
+dataset.columns = predictor_labels
+
+# Inspecting data set and removing duplicates
+print(f"Data set shape: {dataset.shape}")
+dataset_unique = dataset.drop_duplicates()
+print(f"{dataset.shape[0] - dataset_unique.shape[0]} duplicates removed.")
+dataset = dataset_unique
+# Shuffling data set
+print("Shuffling dataset...")
+dataset = shuffle(dataset, random_state = 42)
+
+# Creating train set, validation set and test set... 
+print('Creating train set, validation set and test set...')
+y = dataset['CLASS']
+X = dataset.drop('CLASS', axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, stratify = y, random_state = 42, test_size = 0.2)
+X_train, X_validate, y_train, y_validate = train_test_split(X_train, y_train, stratify = y_train, random_state = 22, test_size = 0.2)
+
+print("Data set class distribution:")
+class_distribution = pd.concat([y.value_counts(), y_train.value_counts(), y_validate.value_counts(), y_test.value_counts()], axis=1, sort=False)
+class_distribution.columns = ['dataset', 'train', 'validate', 'test']
+print(class_distribution)
 
 print('Creating sample weights...')
-sample_weights_per_class = compute_class_weight(class_weight = 'balanced', classes = class_labels, y = y_train)
-sample_weights = []
-for y_value in y_train:
-    sample_weights.append(sample_weights_per_class[y_value])
-
-dtrain = xgb.DMatrix(X_train, label=y_train, weight=sample_weights, feature_names=feature_labels)
-dtest = xgb.DMatrix(X_test, label=y_test, feature_names=feature_labels)
+sample_weights_per_class = compute_class_weight(class_weight = 'balanced', classes = class_labels, y = y)
+train_sample_weights = []
+validation_sample_weights = []
+for class_value in y_train:
+    train_sample_weights.append(sample_weights_per_class[class_value])
+for class_value in y_validate:
+    validation_sample_weights.append(sample_weights_per_class[class_value])
 
 # Setting parameters
-print('Setting tuning parameters...')
 
 # 91.2181 %
 #params = {
@@ -59,22 +77,27 @@ print('Setting tuning parameters...')
 #    'objective': 'multi:softprob',
 #    'num_class': 10}
 
-params = {
-    'nthread':8,
-    'max_depth': 4,
-    'learning_rate': 0.9,
-    'silent': True,
-    'eval_metric': 'auc',
-    'objective': 'multi:softprob',
-    'num_class': 10}
-
-num_round = 1000
-pprint(params)
-print(f"num_round = {num_round}")
-
 # Training model
+#bst = xgb.train(params, dtrain, num_round)
+
+print('Creating model with tuning parameters...')
+bst = XGBClassifier(
+    nthread = 8,
+    n_jobs = -1,
+    num_class = 10,
+    n_estimators= 1000,
+    max_depth = 4,
+    learning_rate = 0.5,
+    eval_metric = 'mlogloss',
+    objective = 'multi:softmax')
+
 print('Training...')
-bst = xgb.train(params, dtrain, num_round)
+bst.fit(
+    X = X_train,
+    y = y_train,
+    sample_weight = train_sample_weights,
+    eval_set = [(X_validate, y_validate)],
+    verbose = True)
 
 #bst = xgb.Booster({'nthread': 8})  # init model
 #bst.load_model('model.bin')  # load data
@@ -85,11 +108,7 @@ bst = xgb.train(params, dtrain, num_round)
 
 # make the prediction using the resulting model
 print('Predicting...')
-y_pred = bst.predict(dtest)
-
-# Converting from probabillity to class
-print('Converting probabillity chance to classes...')
-y_pred = np.asarray([np.argmax(line) for line in y_pred])
+y_pred = bst.predict(X_test)
 
 # Measuring accuracy
 print('Accuracy:')
