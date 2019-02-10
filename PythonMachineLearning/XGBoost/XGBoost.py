@@ -40,8 +40,8 @@ y_pred = model.predict(poker.X_test)
 # Analytics
 metric_results = model.evals_result()['validation_0']['mlogloss']
 print('Plotting evaluation metric results...')
-performance.plot_evaluation_metric_results(metric_results, "CatBoost - Evaluation metric results")
+performance.plot_evaluation_metric_results(metric_results, "XGBoost - Evaluation metric results")
 performance.print_advanced_metrics(y_pred, poker.y_test, poker.class_descriptions)
-performance.plot_confusion_matrix(y_pred, poker.y_test, poker.class_labels, title = 'CatBoost - Confusion matrix', normalize = True)
+performance.plot_confusion_matrix(y_pred, poker.y_test, poker.class_labels, title = 'XGBoost - Confusion matrix', normalize = True)
 plt.show()
 
