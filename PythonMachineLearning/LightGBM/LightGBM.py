@@ -1,57 +1,40 @@
-import numpy as np
-import lightgbm as lgb
-import pandas as pd
-from Performance import plot_confusion_matrix
-from Dataset import create_poker_dataset
+from lightgbm import LGBMClassifier
+import Performance as performance
+import Dataset as dataset
 from matplotlib import pyplot as plt
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
 
-predictor_labels, feature_labels, class_labels, class_descriptions, X_train, X_validate, X_test, y_train, y_validate, y_test, train_sample_weights = create_poker_dataset()
-
-train_data = lgb.Dataset(X_train, label=y_train)
-test_data = lgb.Dataset(X_test, label=y_test, reference=train_data)
-
-# Setting parameters
-print('Setting tuning parameters...')
-parameters = {
-    'objective': 'multiclass',
-    "num_class" : 10,
-    "num_leaves" : 60,
-    "learning_rate" : 0.05
-}
-
-# training
-print('Training...')
-num_round = 200
-bst = lgb.train(parameters, train_data, num_round, verbose_eval=True)
+poker = dataset.Poker(0.5, 0.2)
 
 # loading model
 #print('Loading model')
 #bst = lgb.Booster(model_file='model.txt')
 
+# training
+print('Training...')
+model = LGBMClassifier(
+    thread_count = 8,
+    n_estimators = 2000,
+    num_leaves = 60,
+    depth = 4,
+    learning_rate = 0.4,
+    objective = 'multiclass',
+    loss_function = 'MultiClass',
+    eval_metric = 'MultiClass',
+    classes_count = 10)
+model.fit(X = poker.X_train, y = poker.y_train, sample_weight = poker.train_sample_weights, eval_set = [(poker.X_validate, poker.y_validate)], verbose = True)
+
 # Saving model
-print('Saving model...')
-bst.save_model('model.txt')
+#print('Saving model...')
+#bst.save_model('model.txt')
 
 # Predicting
 print('Predicting...')
-y_pred = bst.predict(X_test)
+y_pred = model.predict(poker.X_test)
 
-# Converting from probabillity to class
-print('Converting probabillity chance to classes...')
-y_pred = np.asarray([np.argmax(line) for line in y_pred])
-
-# Measuring accuracy
-print('Accuracy:')
-accuracy=accuracy_score(y_pred, y_test)
-print(accuracy)
-
-print('Advanced metrics:')
-print(classification_report(y_test, y_pred, target_names=class_descriptions))
-
-# Plotting confusion matrix
-cnf_matrix = confusion_matrix(y_test, y_pred, labels=class_labels)
-plt.figure()
-plot_confusion_matrix(cnf_matrix, classes = class_labels, title = 'Confusion matrix, with normalization', normalize = True)
+# Analytics
+metric_results = model.evals_result_['valid_0']['multi_logloss']
+print('Plotting evaluation metric results...')
+performance.plot_evaluation_metric_results(metric_results, "CatBoost - Evaluation metric results")
+performance.print_advanced_metrics(y_pred, poker.y_test, poker.class_descriptions)
+performance.plot_confusion_matrix(y_pred, poker.y_test, poker.class_labels, title = 'CatBoost - Confusion matrix', normalize = True)
 plt.show()

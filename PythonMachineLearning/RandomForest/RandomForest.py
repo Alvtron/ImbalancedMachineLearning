@@ -1,18 +1,10 @@
-import math
-import numpy as np
-import pandas as pd
-from Performance import plot_confusion_matrix
-from Dataset import create_poker_dataset
+import Performance as performance
+import Dataset as dataset
 from matplotlib import pyplot as plt
-from sklearn import datasets, linear_model
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
-from sklearn.utils.class_weight import compute_class_weight
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
 
-predictor_labels, feature_labels, class_labels, class_descriptions, X_train, X_validate, X_test, y_train, y_validate, y_test, train_sample_weights = create_poker_dataset()
+poker = dataset.Poker(0.5)
 
 # Creating tree
 print('Creating tree...')
@@ -30,26 +22,20 @@ classifier = RandomForestClassifier(
 
 # training
 print('Training...')
-classifier.fit(X_train, y_train, sample_weight = train_sample_weights)
+classifier.fit(poker.X_train, poker.y_train, sample_weight = poker.train_sample_weights)
 
 # Saving model
-print('Saving model...')
-joblib.dump(classifier, 'randomforestmodel.pkl')
+#print('Saving model...')
+j#oblib.dump(classifier, 'randomforestmodel.pkl')
 
 # Predicting
 print('Predicting...')
-y_pred = classifier.predict(X_test)
+y_pred = classifier.predict(poker.X_test)
 
-# Measuring accuracy
-print('Accuracy:')
-accuracy=accuracy_score(y_pred, y_test)
-print(accuracy)
-
-print('Advanced metrics:')
-print(classification_report(y_test, y_pred, target_names=class_descriptions))
-
-# Plotting confusion matrix
-cnf_matrix = confusion_matrix(y_test, y_pred, labels=class_labels)
-plt.figure()
-plot_confusion_matrix(cnf_matrix, classes = class_labels, title = 'Confusion matrix, with normalization', normalize = True)
+# Analytics
+metric_results = model.get_evals_result()['learn']['MultiClass']
+print('Plotting evaluation metric results...')
+performance.plot_evaluation_metric_results(metric_results, "CatBoost - Evaluation metric results")
+performance.print_advanced_metrics(y_pred, poker.y_test, dataset.class_descriptions)
+performance.plot_confusion_matrix(y_pred, poker.y_test, dataset.class_labels, title = 'CatBoost - Confusion matrix', normalize = True)
 plt.show()

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f567613b-1323-4a44-bf85-8d63bbce1b53</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RandomForest.py</StartupFile>
+    <StartupFile>RandomForestTuned.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

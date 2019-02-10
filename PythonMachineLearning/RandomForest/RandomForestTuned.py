@@ -1,8 +1,8 @@
 import math
 import numpy as np
 import pandas as pd
-from Performance import plot_confusion_matrix
-from Dataset import create_poker_dataset
+import Performance as performance
+import Dataset as dataset
 from matplotlib import pyplot as plt
 from pprint import pprint
 from sklearn import datasets, linear_model
@@ -14,7 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.externals import joblib
 
-predictor_labels, feature_labels, class_labels, class_descriptions, X_train, X_validate, X_test, y_train, y_validate, y_test, train_sample_weights = create_poker_dataset()
+poker = dataset.Poker(0.5)
 
 # setting parameters
 print('setting tuning parameters...')
@@ -60,6 +60,6 @@ classifier = RandomizedSearchCV(
 
 # training
 print('Training...')
-classifier.fit(X_train, y_train)
+classifier.fit(poker.X_train, poker.y_train)
 
 pprint(classifier.best_params_)
