@@ -1,7 +1,6 @@
 import sys
 import pandas as pd
 import time
-import Sampling as sampling
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from sklearn.utils.class_weight import compute_class_weight
@@ -37,29 +36,25 @@ class Poker:
 
     @staticmethod
     def save_new_dataset_from_unordered(file_path, sample_size, random_state = 42):
-        print('Importing dataset in chunks...')
-        chunks = sampling.read_csv_in_chuncks('../Library/dataset/poker.unordered.csv', header = False, chunk_size = Poker.size/300)
-        print('Reading dataset to memory...')
-        dataset = pd.DataFrame(chunks)
-        dataset.columns = Poker.predictor_labels
+        chunk_size = Poker.size/10
+        iterator = 0
+        print(f"Reading '../Library/dataset/poker.unordered.csv' in {chunk_size} chunks and saving a {sample_size} stratified sample to '{file_path}'...")
+        print("")
+        for chunk in pd.read_csv('../Library/dataset/poker.unordered.csv', delimiter = ',', header = False, chunksize = chunk_size):
+            X = chunk.drop('CLASS', axis=1)
+            y = chunk['CLASS']
 
-        print('Dividing dataset to X and y...')
-        X = dataset.drop('CLASS', axis=1)
-        y = dataset['CLASS']
-
-        # Stratified sample
-        print('Sampling the dataset...')
-        X_throw, X_keep, y_throw, y_keep = train_test_split(X, y, stratify = y, random_state = random_state, test_size = sample_size)
+            # Stratified sample
+            X_throw, X_keep, y_throw, y_keep = train_test_split(X, y, stratify = y, random_state = random_state, test_size = sample_size)
             
-        # Write to file
-        print('Saving dataset...')
-        if(iterations is 0):
-            dataset.to_csv(file_path, mode = 'w', index = False, header = False)
-        else:
-            dataset.to_csv(file_path, mode = 'a', index = False, header = False)
+            # Write to file
+            if(iterations is 0):
+                dataset.to_csv(file_path, mode = 'w', index = False, header = False)
+            else:
+                dataset.to_csv(file_path, mode = 'a', index = False, header = False)
 
-        # Write to console
-        elapsed_time_since_start = time.time() - start_time
+            iterator = iterator + 1
+            sys.stdout.print(f'\r{iterator}/10 chunks read.')
 
     @staticmethod
     def print_data_set_probability(dataset):
@@ -69,9 +64,8 @@ class Poker:
 
     def __init__(self, test_size, validation_size = None, random_state = 42):
         print('Importing data set...')
+        Poker.save_new_dataset_from_unordered('../Library/dataset/poker.unordered_small.csv', 0.2)
         #dataset = pd.read_csv('../Library/dataset/poker.ordered.csv', header = None, sep = ',', skip_blank_lines = True)
-        dataset = pd.concat([pd.read_csv('../Library/dataset/training.txt', header = None, sep = ',', skip_blank_lines = True),
-                             pd.read_csv('../Library/dataset/testing.txt', header = None, sep = ',', skip_blank_lines = True)])
         dataset.columns = self.predictor_labels
         Poker.print_data_set_probability(dataset)
 
