@@ -69,8 +69,9 @@ class Poker:
 
     def __init__(self, test_size, validation_size = None, random_state = 42):
         print('Importing data set...')
-        Poker.save_new_dataset_from_unordered('../Library/dataset/poker.unordered_small.csv', 0.01)
-        dataset = pd.read_csv('../Library/dataset/poker.unordered_small.csv', header = None, sep = ',', skip_blank_lines = True)
+        #dataset = pd.read_csv('../Library/dataset/poker.ordered.csv', header = None, sep = ',', skip_blank_lines = True)
+        dataset = pd.concat([pd.read_csv('../Library/dataset/training.txt', header = None, sep = ',', skip_blank_lines = True),
+                             pd.read_csv('../Library/dataset/testing.txt', header = None, sep = ',', skip_blank_lines = True)])
         dataset.columns = self.predictor_labels
         Poker.print_data_set_probability(dataset)
 
