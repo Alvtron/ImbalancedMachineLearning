@@ -3,7 +3,7 @@ import Performance as performance
 import Dataset as dataset
 from matplotlib import pyplot as plt
 
-poker = dataset.Poker(0.5, 0.2)
+poker = dataset.Poker(0.6, 0.4)
 
 # loading model
 #print('Loading model')
@@ -12,15 +12,13 @@ poker = dataset.Poker(0.5, 0.2)
 # training
 print('Training...')
 model = LGBMClassifier(
-    thread_count = 8,
-    n_estimators = 2000,
+    n_estimators = 1000,
     num_leaves = 60,
-    depth = 4,
-    learning_rate = 0.4,
+    max_depth = 4,
+    learning_rate = 1,
     objective = 'multiclass',
-    loss_function = 'MultiClass',
-    eval_metric = 'MultiClass',
-    classes_count = 10)
+    metric  = 'multiclass',
+    num_class = 10)
 model.fit(X = poker.X_train, y = poker.y_train, sample_weight = poker.train_sample_weights, eval_set = [(poker.X_validate, poker.y_validate)], verbose = True)
 
 # Saving model

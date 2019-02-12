@@ -12,13 +12,12 @@ classifier = RandomForestClassifier(
     verbose = 2,
     n_jobs = -1,
     random_state = 42,
-    criterion = 'entropy',
-    n_estimators = 1800,
-    max_depth = 30,
-    bootstrap = False,
-    max_features = 'sqrt',
+    bootstrap = True,
+    max_depth = 80,
+    max_features = 'auto',
     min_samples_leaf = 1,
-    min_samples_split = 10)
+    min_samples_split = 5,
+    n_estimators = 600)
 
 # training
 print('Training...')
@@ -26,13 +25,13 @@ classifier.fit(poker.X_train, poker.y_train, sample_weight = poker.train_sample_
 
 # Saving model
 #print('Saving model...')
-j#oblib.dump(classifier, 'randomforestmodel.pkl')
+#oblib.dump(classifier, 'randomforestmodel.pkl')
 
 # Predicting
 print('Predicting...')
 y_pred = classifier.predict(poker.X_test)
 
 # Analytics
-performance.print_advanced_metrics(y_pred, poker.y_test, dataset.class_descriptions)
-performance.plot_confusion_matrix(y_pred, poker.y_test, dataset.class_labels, title = 'RandomForest - Confusion matrix', normalize = True)
+performance.print_advanced_metrics(y_pred, poker.y_test, poker.class_descriptions)
+performance.plot_confusion_matrix(y_pred, poker.y_test, poker.class_labels, title = 'RandomForest - Confusion matrix', normalize = True)
 plt.show()

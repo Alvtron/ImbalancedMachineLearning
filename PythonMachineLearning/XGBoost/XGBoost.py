@@ -5,7 +5,7 @@ import Performance as performance
 import Dataset as dataset
 from matplotlib import pyplot as plt
 
-poker = dataset.Poker(0.5, 0.2)
+poker = dataset.Poker(0.6, 0.4)
 
 print('Creating model with tuning parameters...')
 model = XGBClassifier(

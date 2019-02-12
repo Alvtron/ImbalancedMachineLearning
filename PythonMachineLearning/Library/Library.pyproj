@@ -25,6 +25,7 @@
     <Folder Include="Dataset\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Dataset\poker.ordered.csv" />
     <Content Include="Dataset\testing.txt" />
     <Content Include="Dataset\training.txt" />
   </ItemGroup>
@@ -33,6 +34,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Performance.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sampling.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
