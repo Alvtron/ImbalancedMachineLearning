@@ -5,8 +5,14 @@ import Performance as performance
 import Dataset as dataset
 from matplotlib import pyplot as plt
 
-poker = dataset.Poker(0.6, 0.4)
+# Importing dataset
+poker = dataset.Poker([0.2, 0.2, 0.6], 0.05)
 
+# Loading model
+#model = xgb.Booster({'nthread': 8})  # init model
+#model.load_model('model.bin')  # load data
+
+# Creating model
 print('Creating model with tuning parameters...')
 model = XGBClassifier(
     nthread = 8,
@@ -18,6 +24,7 @@ model = XGBClassifier(
     eval_metric = 'mlogloss',
     objective = 'multi:softmax')
 
+# Training
 print('Training...')
 model.fit(
     X = poker.X_train,
@@ -26,14 +33,11 @@ model.fit(
     eval_set = [(poker.X_validate, poker.y_validate)],
     verbose = True)
 
-#model = xgb.Booster({'nthread': 8})  # init model
-#model.load_model('model.bin')  # load data
-
-# save model
+# Saving model
 #print('Saving model...')
 #model.save_model('poker_xgboost.model')
 
-# make the prediction using the resulting model
+# Predicting
 print('Predicting...')
 y_pred = model.predict(poker.X_test)
 

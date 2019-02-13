@@ -4,9 +4,10 @@ from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
 
-poker = dataset.Poker(0.5)
+# Importing dataset
+poker = dataset.Poker([0.2, 0.2, 0.6], 0.05)
 
-# Creating tree
+# Creating model
 print('Creating tree...')
 classifier = RandomForestClassifier(
     verbose = 2,
@@ -19,7 +20,7 @@ classifier = RandomForestClassifier(
     min_samples_split = 5,
     n_estimators = 600)
 
-# training
+# Training
 print('Training...')
 classifier.fit(poker.X_train, poker.y_train, sample_weight = poker.train_sample_weights)
 

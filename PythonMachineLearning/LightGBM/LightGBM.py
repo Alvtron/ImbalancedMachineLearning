@@ -3,15 +3,16 @@ import Performance as performance
 import Dataset as dataset
 from matplotlib import pyplot as plt
 
-poker = dataset.Poker(0.6, 0.4)
+# Importing dataset
+poker = dataset.Poker([0.2, 0.2, 0.6], 0.01)
 
-# loading model
+# Loading model
 #print('Loading model')
 #bst = lgb.Booster(model_file='model.txt')
 
-# training
-print('Training...')
+# Creating model
 model = LGBMClassifier(
+    n_jobs = -1,
     n_estimators = 1000,
     num_leaves = 60,
     max_depth = 4,
@@ -19,6 +20,9 @@ model = LGBMClassifier(
     objective = 'multiclass',
     metric  = 'multiclass',
     num_class = 10)
+
+# Training
+print('Training...')
 model.fit(X = poker.X_train, y = poker.y_train, sample_weight = poker.train_sample_weights, eval_set = [(poker.X_validate, poker.y_validate)], verbose = True)
 
 # Saving model

@@ -3,30 +3,34 @@ import Dataset as dataset
 from matplotlib import pyplot as plt
 from catboost import CatBoostClassifier
 
-poker = dataset.Poker([0.1, 0.2, 0.7], 0.05)
+# Importing dataset
+poker = dataset.Poker([0.2, 0.2, 0.6], 0.05)
 
+# Loading model
 #print('Loading existing model...')
 #load_model("catboost_model", format='catboost')
 
+# Creating model
 print('Initializing model...')
 model = CatBoostClassifier(
     task_type = 'GPU',
     thread_count = 8,
-    num_trees = 500,
+    num_trees = 3000,
     depth = 10,
-    learning_rate = 0.5,
+    learning_rate = 0.3,
     loss_function = 'MultiClass',
     eval_metric = 'TotalF1',
     classes_count = 10)
 
+# Training
 print('Training...')
 model.fit(X = poker.X_train, y = poker.y_train, sample_weight = poker.train_sample_weights, eval_set = [(poker.X_validate, poker.y_validate)], verbose = True)
 
-# save model
+# Saving model
 #print('Saving model...')
 #model.save_model("catboost_model", format="cbm")
 
-# make the prediction using the resulting model
+# Predicting
 print('Predicting...')
 y_pred = model.predict(poker.X_test, prediction_type='Class')
 

@@ -14,7 +14,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.externals import joblib
 
-poker = dataset.Poker(0.5)
+# Importing dataset
+poker = dataset.Poker([0.2, 0.2, 0.6], 0.05)
 
 # setting parameters
 print('setting tuning parameters...')
@@ -44,7 +45,7 @@ random_grid = {
 print('Tuning parameters:')
 pprint(random_grid)
 
-# Creating tree
+# Creating model
 print('Creating tree...')
 rf = RandomForestClassifier()
 # Random search of parameters, using 3 fold cross validation, 
@@ -58,7 +59,7 @@ classifier = RandomizedSearchCV(
     random_state=42,
     n_jobs = -1)
 
-# training
+# Training
 print('Training...')
 classifier.fit(poker.X_train, poker.y_train)
 
