@@ -26,8 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dataset\poker.ordered.csv" />
-    <Content Include="Dataset\testing.txt" />
-    <Content Include="Dataset\training.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dataset.py">

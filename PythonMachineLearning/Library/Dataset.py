@@ -1,4 +1,5 @@
 import sys
+import os.path
 import pandas as pd
 import time
 from sklearn.model_selection import train_test_split
@@ -42,20 +43,18 @@ class Poker:
         print("")
         for chunk in pd.read_csv('../Library/dataset/poker.unordered.csv', delimiter = ',', header = None, chunksize = chunk_size):
             chunk.columns = Poker.predictor_labels
+            # Define X and y
             X = chunk.drop('CLASS', axis=1)
             y = chunk['CLASS']
-
             # Stratified sample
             X_throw, X_keep, y_throw, y_keep = train_test_split(X, y, stratify = y, random_state = random_state, test_size = sample_size)
-           
             chunk = pd.concat([X_keep, y_keep], axis=1, sort=None)
-
             # Write to file
             if(iterations is 0):
                 chunk.to_csv(file_path, mode = 'w', index = False, header = False)
             else:
                 chunk.to_csv(file_path, mode = 'a', index = False, header = False)
-
+            # Update console
             iterations = iterations + 1
             sys.stdout.write(f'\r{iterations}/10 chunks read.')
 
@@ -67,10 +66,11 @@ class Poker:
 
     def __init__(self, test_size, validation_size = None, random_state = 42):
         print('Importing data set...')
-        Poker.save_new_dataset_from_unordered('../Library/dataset/poker.unordered_10.csv', 0.1)
-        Poker.save_new_dataset_from_unordered('../Library/dataset/poker.unordered_05.csv', 0.05)
-        Poker.save_new_dataset_from_unordered('../Library/dataset/poker.unordered_01.csv', 0.01)
-        dataset = pd.read_csv('../Library/dataset/poker.unordered_10.csv', header = None, sep = ',', skip_blank_lines = True)
+        dataset_file = '../Library/dataset/poker.unordered_01.csv'
+        if (not os.path.isfile(dataset_file)):
+            Poker.save_new_dataset_from_unordered(dataset_file, 0.01)
+
+        dataset = pd.read_csv(dataset_file, header = None, sep = ',', skip_blank_lines = True)
         dataset.columns = self.predictor_labels
         Poker.print_data_set_probability(dataset)
 
