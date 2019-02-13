@@ -57,6 +57,7 @@ class Poker:
             # Update console
             iterations = iterations + 1
             sys.stdout.write(f'\r{iterations}/10 chunks read.')
+        print("")
 
     @staticmethod
     def print_data_set_probability(dataset):
@@ -64,35 +65,62 @@ class Poker:
         distribution.columns = ['CLASS', 'Probability']
         print(distribution)
 
-    def __init__(self, test_size, validation_size = None, random_state = 42):
-        print('Importing data set...')
-        dataset_file = '../Library/dataset/poker.unordered_01.csv'
+    def __init__(self, data_distribution = [0.2, 0.1, 0.7], sample_size = 0.05, random_state = 42):
+        if (sample_size < 0 or sample_size > 1):
+            raise ValueError("Sample size is outside the allowed range (0.0 to 1.0).")
+        if (len(data_distribution) > 3 or len(data_distribution) < 2):
+            raise ValueError("Data distribution must consist of 2 to 3 values.")
+        if (sum(data_distribution) != 1.0):
+            raise ValueError(f"Data distribution must add up to 1.0. Sum was {sum(data_distribution)}.")
+
+        dataset_file = '../Library/dataset/poker.unordered_%0.4f.csv' % sample_size
+        print(f"Importing data set '{dataset_file}'...")
         if (not os.path.isfile(dataset_file)):
-            Poker.save_new_dataset_from_unordered(dataset_file, 0.01)
+            print(f"Could not find file '{dataset_file}'")
+            print(f'Attempting to create it with sample size {sample_size}...')
+            Poker.save_new_dataset_from_unordered(dataset_file, sample_size)
 
         dataset = pd.read_csv(dataset_file, header = None, sep = ',', skip_blank_lines = True)
         dataset.columns = self.predictor_labels
-        Poker.print_data_set_probability(dataset)
+        
+        train_distr = data_distribution[0]
 
-        self.X = dataset.drop('CLASS', axis=1)
-        self.y = dataset['CLASS']
-
-        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, stratify = self.y, random_state = random_state, test_size = test_size)
-        if (validation_size is not None):
-            X_train, X_validate, y_train, y_validate = train_test_split(X_train, y_train, stratify = y_train, random_state = random_state, test_size = validation_size)
-
-        print("Data set class distribution:")
-        if (validation_size is None):
-            class_distribution = pd.concat([self.y.value_counts(), y_train.value_counts(), y_test.value_counts()], axis = 1, sort = False)
-            class_distribution.columns = ['dataset', 'train', 'test']
+        if (len(data_distribution) == 2):
+            test_distr = data_distribution[1]
+        if (len(data_distribution) == 3):
+            test_distr = data_distribution[1] + data_distribution[2]
+            valid_distr = data_distribution[1] / test_distr
+        
+        if (len(data_distribution) == 3):
+            print('Splitting data into train, validate and test set...')
         else:
-            class_distribution = pd.concat([self.y.value_counts(), y_train.value_counts(), y_validate.value_counts(), y_test.value_counts()], axis = 1, sort = False)
+            print('Splitting data into train and test set...')
+
+        X = dataset.drop('CLASS', axis=1)
+        y = dataset['CLASS']
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, stratify = y, random_state = random_state, test_size = test_distr)
+        if (len(data_distribution) == 3):
+            X_test, X_validate, y_test, y_validate = train_test_split(X_test, y_test, stratify = y_test, random_state = random_state, test_size = valid_distr)
+
+        # Print data distribution
+        print("Calculating class distribution:")
+        if (len(data_distribution) == 2):
+            print(f'Class distribution: {data_distribution[0] * 100}% train / {data_distribution[1] * 100}% test')
+        if (len(data_distribution) == 3):
+            print(f'Class distribution: {data_distribution[0] * 100}% train / {data_distribution[1] * 100}% validate / {data_distribution[2] * 100}% test')
+
+        if (len(data_distribution) == 2):
+            class_distribution = pd.concat([y.value_counts(), y_train.value_counts(), y_test.value_counts()], axis = 1, sort = False)
+            class_distribution.columns = ['dataset', 'train', 'test']
+        if (len(data_distribution) == 3):
+            class_distribution = pd.concat([y.value_counts(), y_train.value_counts(), y_validate.value_counts(), y_test.value_counts()], axis = 1, sort = False)
             class_distribution.columns = ['dataset', 'train', 'validate', 'test']
         
         print(class_distribution)
 
         print('Creating sample weights...')
-        sample_weights_per_class = compute_class_weight(class_weight = 'balanced', classes = Poker.class_labels, y = self.y)
+        sample_weights_per_class = compute_class_weight(class_weight = 'balanced', classes = Poker.class_labels, y = y)
         train_sample_weights = []
         for class_value in y_train:
             train_sample_weights.append(sample_weights_per_class[class_value])
@@ -102,6 +130,6 @@ class Poker:
         self.y_train = y_train
         self.y_test = y_test
         self.train_sample_weights = train_sample_weights
-        if (validation_size is not None):
+        if (len(data_distribution) == 3):
             self.y_validate = y_validate
             self.X_validate = X_validate
