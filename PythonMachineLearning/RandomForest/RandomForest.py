@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
 
 # Importing dataset
-poker = dataset.Poker([0.2, 0.2, 0.6], 0.05)
+poker = dataset.Poker([0.2, 0.2, 0.6], 0.01)
 
 # Creating model
 print('Creating tree...')

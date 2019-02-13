@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from catboost import CatBoostClassifier
 
 # Importing dataset
-poker = dataset.Poker([0.2, 0.2, 0.6], 0.05)
+poker = dataset.Poker([0.2, 0.1, 0.7], 0.4)
 
 # Loading model
 #print('Loading existing model...')
@@ -15,9 +15,9 @@ print('Initializing model...')
 model = CatBoostClassifier(
     task_type = 'GPU',
     thread_count = 8,
-    num_trees = 3000,
+    num_trees = 700,
     depth = 10,
-    learning_rate = 0.3,
+    learning_rate = 0.23,
     loss_function = 'MultiClass',
     eval_metric = 'TotalF1',
     classes_count = 10)

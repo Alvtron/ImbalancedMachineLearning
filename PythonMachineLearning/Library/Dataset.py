@@ -124,6 +124,8 @@ class Poker:
         train_sample_weights = []
         for class_value in y_train:
             train_sample_weights.append(sample_weights_per_class[class_value])
+       
+
 
         self.X_train = X_train
         self.X_test = X_test
