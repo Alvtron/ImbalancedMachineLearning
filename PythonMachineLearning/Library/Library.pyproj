@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Dataset\" />
+    <Folder Include="Plots\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dataset\poker.ordered.csv" />

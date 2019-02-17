@@ -1,0 +1,62 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>0f375eac-effe-44aa-9156-29485824a8ca</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>MultiClassificationModel.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>MultiClassificationModel</Name>
+    <RootNamespace>MultiClassificationModel</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="MultiClassificationModel.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CatBoost\CatBoost.pyproj">
+      <Name>CatBoost</Name>
+      <Project>{4970038c-1b86-46f4-8444-a47a97e35d57}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Library\Library.pyproj">
+      <Name>Library</Name>
+      <Project>{c6283161-729f-4a65-9ab8-bed11cad9ef3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\LightGBM\LightGBM.pyproj">
+      <Name>LightGBM</Name>
+      <Project>{a9766f97-0e6b-49cc-ac01-dbb45668e8df}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\RandomForest\RandomForest.pyproj">
+      <Name>RandomForest</Name>
+      <Project>{f567613b-1323-4a44-bf85-8d63bbce1b53}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\XGBoost\XGBoost.pyproj">
+      <Name>XGBoost</Name>
+      <Project>{5e703f06-01f5-43f9-a97b-26298d7b6126}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
