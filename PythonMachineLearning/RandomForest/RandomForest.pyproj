@@ -22,12 +22,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="RandomForest.py" />
-    <Compile Include="RandomForestTuned.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.pyproj">
       <Name>Library</Name>
       <Project>{c6283161-729f-4a65-9ab8-bed11cad9ef3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\MultiClassificationTrainer\MultiClassificationTrainer.pyproj">
+      <Name>MultiClassificationTrainer</Name>
+      <Project>{30992b38-f716-4ee7-bf91-1e922b837a82}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

@@ -1,0 +1,13 @@
+booster: gbtree
+nthread: 8
+num_class: 10
+n_estimators: 2
+learning_rate: 0.5
+gamma: 0
+max_depth: 10
+min_child_weight: 1
+max_delta_step: 0
+reg_aplha: 0
+reg_lambda: 0
+objective: multi:softmax
+eval_metric: mlogloss

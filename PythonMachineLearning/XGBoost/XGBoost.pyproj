@@ -29,6 +29,11 @@
       <Project>{c6283161-729f-4a65-9ab8-bed11cad9ef3}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\MultiClassificationTrainer\MultiClassificationTrainer.pyproj">
+      <Name>MultiClassificationTrainer</Name>
+      <Project>{30992b38-f716-4ee7-bf91-1e922b837a82}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

@@ -1,39 +1,32 @@
-import Performance as performance
-import Dataset as dataset
-from matplotlib import pyplot as plt
+import MultiClassificationTrainer as mct
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.externals import joblib
+from Dataset import Poker
 
 # Importing dataset
-poker = dataset.Poker([0.2, 0.1, 0.7], 0.02, None, False)
+dataset = Poker([0.2, 0.1, 0.7], 0.02, None, False)
 
 # Setting parameters
 parameters = {
-    'verbose': 2,
-    'n_jobs': -1,
-    'random_state': 42,
-    'bootstrap': True,
-    'max_depth': 80,
-    'max_features': 'auto',
-    'min_samples_leaf': 1,
-    'min_samples_split': 5,
-    'n_estimators': 600}
+    'n_jobs': [-1], # None, The number of jobs to run in parallel for both fit and predict. None means 1 unless in a joblib.parallel_backend context. -1 means using all processors.
+    'n_estimators': [200], # 100, The number of trees in the forest.
+    'random_state': [42],
+    'verbose': [2],
+    'max_depth': [10], # None, The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure or until all leaves contain less than min_samples_split samples.
+    'min_samples_leaf': [1], # 1, The minimum number of samples required to be at a leaf node. A split point at any depth will only be considered if it leaves at least min_samples_leaf training samples in each of the left and right branches. This may have the effect of smoothing the model, especially in regression. If int, then consider min_samples_leaf as the minimum number. If float, then min_samples_leaf is a fraction and ceil(min_samples_leaf * n_samples) are the minimum number of samples for each node.
+    'min_samples_split': [5], # 2, The minimum number of samples required to split an internal node: If int, then consider min_samples_split as the minimum number. If float, then min_samples_split is a fraction and ceil(min_samples_split * n_samples) are the minimum number of samples for each split.
+    'min_weight_fraction_leaf': [0], # 0, The minimum weighted fraction of the sum total of weights (of all the input samples) required to be at a leaf node. Samples have equal weight when sample_weight is not provided.
+    'max_features': ['auto'], # 'auto', The number of features to consider when looking for the best split: If int, then consider max_features features at each split. If float, then max_features is a fraction and int(max_features * n_features) features are considered at each split. If “auto”, then max_features=sqrt(n_features). If “sqrt”, then max_features=sqrt(n_features) (same as “auto”). If “log2”, then max_features=log2(n_features). If None, then max_features=n_features.
+    'max_leaf_nodes': [None], # None, Grow trees with max_leaf_nodes in best-first fashion. Best nodes are defined as relative reduction in impurity. If None then unlimited number of leaf nodes.
+    'min_impurity_decrease': [0], # 0, A node will be split if this split induces a decrease of the impurity greater than or equal to this value.
+    'bootstrap': [True], # True, Whether bootstrap samples are used when building trees
+    'oob_score': [False], # Whether to use out-of-bag samples to estimate the generalization accuracy.
+    'class_weight': [None], # None, Weights associated with classes in the form {class_label: weight}. If not given, all classes are supposed to have weight one. For multi-output problems, a list of dicts can be provided in the same order as the columns of y.
+    }
 
-# Creating model
-print('Creating tree...')
-classifier = RandomForestClassifier(**parameters)
-
-# Training
-print('Training...')
-classifier.fit(poker.X_train, poker.y_train, sample_weight = poker.train_sample_weights)
-
-# Predicting
-print('Predicting...')
-y_pred = classifier.predict(poker.X_test)
+# Training model
+model, parameters, y_pred, gmean = mct.multiple_parameter_training(dataset, RandomForestClassifier, parameters, True)
 
 # Analytics
-title = "RandomForest ({0:0.0f}% sample {1:0.0f}-{2:0.0f}-{3:0.0f})".format(poker.sample_size * 100, poker.training_size * 100, poker.validation_size * 100, poker.testing_size * 100)
-performance.write_parameters_to_file(title, parameters)
-performance.print_advanced_metrics(y_pred, poker.y_test, poker.class_labels, poker.class_descriptions)
-performance.plot_confusion_matrix(y_pred, poker.y_test, poker.class_labels, title = f'{title} - Confusion matrix', normalize = True)
-plt.show()
+print('Analyzing...')
+title = "RandomForest ({0:0.0f}% sample {1:0.0f}-{2:0.0f}-{3:0.0f}) {4:0.15f}".format(dataset.sample_size * 100, dataset.training_size * 100, dataset.validation_size * 100, dataset.testing_size * 100, gmean)
+mct.analyze_and_save(title = title, dataset = dataset, y_pred = y_pred, parameters = parameters)

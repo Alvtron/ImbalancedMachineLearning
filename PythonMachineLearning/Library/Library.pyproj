@@ -23,7 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Dataset\" />
-    <Folder Include="Plots\" />
+    <Folder Include="Results\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dataset\poker.ordered.csv" />
@@ -35,7 +35,7 @@
     <Compile Include="Dataset.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Performance.py">
+    <Compile Include="Evaluation.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
