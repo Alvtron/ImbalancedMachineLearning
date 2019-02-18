@@ -10,12 +10,12 @@ parameters = {
     'boosting_type': ['gbdt'], # ‘gbdt’, traditional Gradient Boosting Decision Tree. ‘dart’, Dropouts meet Multiple Additive Regression Trees. ‘goss’, Gradient-based One-Side Sampling. ‘rf’, Random Forest.
     'n_jobs': [-1],
     'num_class': [10],
-    'n_estimators': [2000], # 100, Number of boosted trees to fit.
-    'num_leaves': [60], # 31, Maximum tree leaves for base learners.
-    'max_depth': [4], # -1, Maximum tree depth for base learners, -1 means no limit.
-    'learning_rate': [0.5], # 0.1, Boosting learning rate.
+    'n_estimators': [1000], # 100, Number of boosted trees to fit.
+    'num_leaves': [31], # 31, Maximum tree leaves for base learners.
+    'max_depth': [7], # -1, Maximum tree depth for base learners, -1 means no limit.
+    'learning_rate': [0.8], # 0.1, Boosting learning rate.
     'min_split_gain': [0], # 0, Minimum loss reduction required to make a further partition on a leaf node of the tree.
-    'min_child_samples': [20], # 20, Minimum number of data needed in a child (leaf).
+    'min_child_samples': [10], # 20, Minimum number of data needed in a child (leaf).
     'subsample': [1], # 1, Subsample ratio of the training instance.
     'subsample_freq': [0], # 0, Frequence of subsample, <=0 means no enable.
     'colsample_bytree': [1], # 1, Subsample ratio of columns when constructing each tree.
