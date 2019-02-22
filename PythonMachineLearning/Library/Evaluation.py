@@ -1,12 +1,14 @@
 import os
 import errno
 import numpy as np
+import pandas as pd
 import time
 import itertools
 import imblearn.metrics
 import sklearn.metrics
 from matplotlib import pyplot as plt
 import json
+from CollectionExtensions import flatten
 
 class Evaluator:
     def __init__(self, title):
@@ -52,8 +54,8 @@ class Evaluator:
         plt.ylabel('Value')
         plt.title(f'{self.title} - Evaluation metrics')
         plt.axhline(y = 0, linewidth=0.5, color = 'k')
-        for metric_type, metric_result in metric_results.items():
-            line, = plt.plot(metric_results[metric_type], label=metric_type)
+        for type, result in flatten(metric_results, sep='_').items():
+            line, = plt.plot(result, label=f"{type}")
             plt.legend()
         plt.savefig(fname = f'{self.file_path} - Evaluation metrics.png', format = 'png', dpi = 300)
         plt.savefig(fname = f'{self.file_path} - Evaluation metrics.svg', format = 'svg')
@@ -70,8 +72,17 @@ class Evaluator:
         with open(f"{self.file_path} - Metrics.txt", "w") as text_file:
             text_file.write(result)
 
-    def write_parameters_to_file(self, parameters):
-        with open(f"{self.file_path} - Parameters.txt", "a") as text_file:
+    def write_model_parameters_to_file(self, parameters):
+        with open(f"{self.file_path} - Model parameters.txt", "a") as text_file:
+            for key, value in parameters.items():
+                if (isinstance(value, list)):
+                    list_string = ",".join(map(str, value))
+                    text_file.write(f'{key}: [{list_string}]\n')
+                else:
+                    text_file.write(f'{key}: {value}\n')
+
+    def write_dataset_parameters_to_file(self, parameters):
+        with open(f"{self.file_path} - Dataset parameters.txt", "a") as text_file:
             for key, value in parameters.items():
                 if (isinstance(value, list)):
                     list_string = ",".join(map(str, value))

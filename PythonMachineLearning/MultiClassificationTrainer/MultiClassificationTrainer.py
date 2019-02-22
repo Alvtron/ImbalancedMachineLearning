@@ -7,6 +7,7 @@ from itertools import product
 from matplotlib import pyplot as plt
 from Evaluation import Evaluator
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
 from Dataset import Poker
 
 def multiple_parameter_training(dataset, classifier, parameters, verbose = False):
@@ -29,7 +30,7 @@ def multiple_parameter_training(dataset, classifier, parameters, verbose = False
         # Creating model
         model = classifier(**params)
         # Training
-        if (classifier is RandomForestClassifier):
+        if (classifier is RandomForestClassifier or classifier is AdaBoostClassifier):
             model.fit(
                 X = dataset.X_train,
                 y = dataset.y_train)
@@ -66,7 +67,7 @@ def single_parameter_training(dataset, classifier, parameters, verbose = False):
     model = classifier(**parameters)
     # Training
     if (verbose): print('Training...')
-    if (classifier is RandomForestClassifier):
+    if (classifier is RandomForestClassifier or classifier is AdaBoostClassifier):
         model.fit(
             X = dataset.X_train,
             y = dataset.y_train,
@@ -85,10 +86,12 @@ def single_parameter_training(dataset, classifier, parameters, verbose = False):
     # Return result
     return model, parameters, y_pred
 
-def analyze_and_save(title, dataset, y_pred, metric_results = None, parameters = None):
+def analyze_and_save(title, dataset, y_pred, metric_results = None, model_parameters = None, dataset_parameters = None):
     evaluator = Evaluator(title)
-    if (parameters is not None):
-        evaluator.write_parameters_to_file(parameters)
+    if (model_parameters is not None):
+        evaluator.write_model_parameters_to_file(model_parameters)
+    if (dataset_parameters is not None):
+        evaluator.write_dataset_parameters_to_file(dataset_parameters)
     if (metric_results is not None):
         evaluator.plot_evaluation_metric_results(metric_results)
     evaluator.plot_confusion_matrix(y_pred, dataset.y_test, dataset.class_labels, normalize = True)

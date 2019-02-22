@@ -32,6 +32,9 @@
     <Content Include="Dataset\uci.poker.training.csv" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectionExtensions.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Dataset.py">
       <SubType>Code</SubType>
     </Compile>

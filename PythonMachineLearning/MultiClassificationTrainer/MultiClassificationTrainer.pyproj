@@ -4,7 +4,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>30992b38-f716-4ee7-bf91-1e922b837a82</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>MultiClassificationTrainer.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

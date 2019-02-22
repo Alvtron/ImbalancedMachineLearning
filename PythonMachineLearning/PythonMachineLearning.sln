@@ -15,6 +15,10 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "XGBoost", "XGBoost\XGBoost.
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "MultiClassificationTrainer", "MultiClassificationTrainer\MultiClassificationTrainer.pyproj", "{30992B38-F716-4EE7-BF91-1E922B837A82}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AdaBoost", "AdaBoost\AdaBoost.pyproj", "{A9AD6CA1-672B-427B-A154-EB984E7E2AFA}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TensorFlow", "TensorFlow\TensorFlow.pyproj", "{1D8F5AC9-7B80-4052-A099-EEA630CEDEE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,10 @@ Global
 		{5E703F06-01F5-43F9-A97B-26298D7B6126}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30992B38-F716-4EE7-BF91-1E922B837A82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{30992B38-F716-4EE7-BF91-1E922B837A82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9AD6CA1-672B-427B-A154-EB984E7E2AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9AD6CA1-672B-427B-A154-EB984E7E2AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D8F5AC9-7B80-4052-A099-EEA630CEDEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D8F5AC9-7B80-4052-A099-EEA630CEDEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

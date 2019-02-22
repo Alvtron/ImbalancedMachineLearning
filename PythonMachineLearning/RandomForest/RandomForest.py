@@ -3,10 +3,16 @@ from sklearn.ensemble import RandomForestClassifier
 from Dataset import Poker
 
 # Importing dataset
-dataset = Poker([0.2, 0.1, 0.7], 0.02, None, False)
+dataset_parameters = {
+    'data_distribution': [0.2, 0.1, 0.7],
+    'sample_size': 0.02,
+    'sampling_strategy': None,
+    'verbose': None}
+
+dataset = Poker(**dataset_parameters)
 
 # Setting parameters
-parameters = {
+model_parameters = {
     'n_jobs': [-1], # None, The number of jobs to run in parallel for both fit and predict. None means 1 unless in a joblib.parallel_backend context. -1 means using all processors.
     'n_estimators': [100, 200, 50], # 100, The number of trees in the forest.
     'random_state': [42],
@@ -24,9 +30,13 @@ parameters = {
     }
 
 # Training model
-model, parameters, y_pred, gmean = mct.multiple_parameter_training(dataset, RandomForestClassifier, parameters, True)
+model, model_parameters, y_pred, gmean = mct.multiple_parameter_training(dataset, RandomForestClassifier, model_parameters, True)
 
 # Analytics
 print('Analyzing...')
-title = "RandomForest ({0:0.0f}% sample {1:0.0f}-{2:0.0f}-{3:0.0f}) {4:0.15f}".format(dataset.sample_size * 100, dataset.training_size * 100, dataset.validation_size * 100, dataset.testing_size * 100, gmean)
-mct.analyze_and_save(title = title, dataset = dataset, y_pred = y_pred, parameters = parameters)
+mct.analyze_and_save(
+    title = "RandomForest ({0:0.0f}% sample {1:0.0f}-{2:0.0f}-{3:0.0f}) {4:0.15f}".format(dataset.sample_size * 100, dataset.training_size * 100, dataset.validation_size * 100, dataset.testing_size * 100, gmean),
+    dataset = dataset,
+    y_pred = y_pred,
+    model_parameters = model_parameters,
+    dataset_parameters = dataset_parameters)
