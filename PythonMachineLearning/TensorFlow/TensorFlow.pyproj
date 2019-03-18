@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>TensorFlow</Name>
     <RootNamespace>TensorFlow</RootNamespace>
+    <InterpreterId>CondaEnv|CondaEnv|tf-gpu</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +22,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AdaNet.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TensorFlow.py" />
+    <Compile Include="TensorFlowHyperParameter.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.pyproj">
@@ -34,6 +39,9 @@
       <Project>{30992b38-f716-4ee7-bf91-1e922b837a82}</Project>
       <Private>True</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|tf-gpu" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

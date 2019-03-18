@@ -1,0 +1,3 @@
+optimizer: <tensorflow.python.keras.optimizers.SGD object at 0x000001BEA9084518>
+loss: sparse_categorical_crossentropy
+metrics: [<function f1 at 0x000001BEA01730D0>]

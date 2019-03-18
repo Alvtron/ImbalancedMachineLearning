@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler, SMOTE
+from imblearn.combine import SMOTEENN
 from sklearn.utils.class_weight import compute_class_weight
 
 class Poker:
@@ -161,6 +162,21 @@ class Poker:
             sm = RandomOverSampler(random_state = random_state, sampling_strategy = number_of_samples_per_class)
         elif(sampling_strategy == "SMOTE"):
             sm = SMOTE(random_state = random_state, sampling_strategy = 'auto', k_neighbors = 1, n_jobs=8)
+        elif(sampling_strategy == "over_and_under_sampling"):
+            class_count = y.value_counts()
+            number_of_samples_per_class = { 0:100000, 1:100000, 2:100000, 3:100000, 4:100000, 5:100000, 6:100000, 7:100000, 8:100000, 9:100000 } 
+            number_of_under_samples_per_class = {}
+            number_of_over_samples_per_class = {}
+            for index, value in class_count.iteritems():
+                if (value > number_of_samples_per_class[index]):
+                    number_of_under_samples_per_class[index] = number_of_samples_per_class[index]
+                elif(value < number_of_samples_per_class[index]):
+                    number_of_over_samples_per_class[index] = number_of_samples_per_class[index]
+            rus = RandomUnderSampler(random_state = random_state, sampling_strategy = number_of_under_samples_per_class)
+            X_res, y_res = rus.fit_sample(X = X.values, y = y.values)
+            X = pd.DataFrame(data = X_res, columns = Poker.feature_labels)
+            y = pd.Series(data = y_res.flatten())
+            sm = SMOTE(random_state = random_state, sampling_strategy = number_of_over_samples_per_class, k_neighbors = 1, n_jobs=8)
         elif(sampling_strategy == "yamane"):
             class_count = y.value_counts()
             number_of_samples_per_class = { 0:400, 1:400, 2:400, 3:400, 4:400, 5:400, 6:400, 7:398, 8:367, 9:219 } 

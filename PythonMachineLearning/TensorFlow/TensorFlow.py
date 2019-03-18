@@ -3,40 +3,40 @@ from Dataset import Poker
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import backend as K
+from tensorflow.python.ops import array_ops
+from tensorflow.keras.layers import LSTM, Dense, Bidirectional, Input,Dropout,BatchNormalization, CuDNNGRU, CuDNNLSTM
+from tensorflow.keras import backend, Sequential
+from tensorflow.keras.optimizers import SGD
 from imblearn.metrics import geometric_mean_score
 import scipy as sp
 
 def f1(y_true, y_pred):
-    def recall(y_true, y_pred):
-        """Recall metric.
+    y_pred = backend.round(y_pred)
+    tp = backend.sum(backend.cast(y_true*y_pred, 'float'), axis=0)
+    tn = backend.sum(backend.cast((1-y_true)*(1-y_pred), 'float'), axis=0)
+    fp = backend.sum(backend.cast((1-y_true)*y_pred, 'float'), axis=0)
+    fn = backend.sum(backend.cast(y_true*(1-y_pred), 'float'), axis=0)
 
-        Only computes a batch-wise average of recall.
+    p = tp / (tp + fp + backend.epsilon())
+    r = tp / (tp + fn + backend.epsilon())
 
-        Computes the recall, a metric for multi-label classification of
-        how many relevant items are selected.
-        """
-        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-        possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-        recall = true_positives / (possible_positives + K.epsilon())
-        return recall
+    f1 = 2*p*r / (p+r+backend.epsilon())
+    f1 = tf.where(tf.is_nan(f1), tf.zeros_like(f1), f1)
+    return backend.mean(f1)
 
-    def precision(y_true, y_pred):
-        """Precision metric.
+def f1_loss(y_true, y_pred):
+    
+    tp = backend.sum(backend.cast(y_true*y_pred, 'float'), axis=0)
+    tn = backend.sum(backend.cast((1-y_true)*(1-y_pred), 'float'), axis=0)
+    fp = backend.sum(backend.cast((1-y_true)*y_pred, 'float'), axis=0)
+    fn = backend.sum(backend.cast(y_true*(1-y_pred), 'float'), axis=0)
 
-        Only computes a batch-wise average of precision.
+    p = tp / (tp + fp + backend.epsilon())
+    r = tp / (tp + fn + backend.epsilon())
 
-        Computes the precision, a metric for multi-label classification of
-        how many selected items are relevant.
-        """
-        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-        predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-        precision = true_positives / (predicted_positives + K.epsilon())
-        return precision
-    precision = precision(y_true, y_pred)
-    recall = recall(y_true, y_pred)
-    return 2*((precision*recall)/(precision+recall+K.epsilon()))
+    f1 = 2*p*r / (p+r+backend.epsilon())
+    f1 = tf.where(tf.is_nan(f1), tf.zeros_like(f1), f1)
+    return 1 - backend.mean(f1)
 
 def gmean(y_true, y_pred):
     """Compute the geometric mean.
@@ -46,40 +46,76 @@ def gmean(y_true, y_pred):
     """
     def recall(y_true, y_pred):
         """Recall metric.
-
         Only computes a batch-wise average of recall.
-
         Computes the recall, a metric for multi-label classification of
         how many relevant items are selected.
         """
-        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-        possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-        recall = true_positives / (possible_positives + K.epsilon())
+        true_positives = backend.sum(backend.round(backend.clip(y_true * y_pred, 0, 1)))
+        possible_positives = backend.sum(backend.round(backend.clip(y_true, 0, 1)))
+        recall = true_positives / (possible_positives + backend.epsilon())
         return recall
 
     recall = recall(y_true, y_pred)
 
-    return K.pow(tf.to_float(recall), 1.0/tf.size(recall))
+    return backend.pow(tf.to_float(recall), 1.0/tf.size(recall))
+
+def categorical_focal_loss(gamma=2.0, alpha=0.25):
+    """
+    Implementation of Focal Loss from the paper in multiclass classification
+    Formula:
+        loss = -alpha*((1-p)^gamma)*log(p)
+    Paper:
+        https://arxiv.org/abs/1708.02002
+    Parameters:
+        alpha -- the same as weighting factor in balanced cross entropy
+        gamma -- focusing parameter for modulating factor (1-p)
+    Default value:
+        gamma -- 2.0 as mentioned in the paper
+        alpha -- 0.25 as mentioned in the paper
+    """
+    def focal_loss(y_true, y_pred):
+        # Define epsilon so that the backpropagation will not result in NaN
+        # for 0 divisor case
+        epsilon = backend.epsilon()
+        # Add the epsilon to prediction value
+        #y_pred = y_pred + epsilon
+        # Clip the prediction value
+        y_pred = backend.clip(y_pred, epsilon, 1.0-epsilon)
+        # Calculate cross entropy
+        cross_entropy = -y_true*backend.log(y_pred)
+        # Calculate weight that consists of modulating factor and weighting factor
+        weight = alpha * y_true * backend.pow((1-y_pred), gamma)
+        # Calculate focal loss
+        loss = weight * cross_entropy
+        # Sum the losses in mini_batch
+        loss = backend.sum(loss, axis=1)
+        return loss
+    
+    return focal_loss
 
 # Importing dataset
 dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
     'sample_size': 0.02,
-    'sampling_strategy': None,
-    'verbose': False}
+    'sampling_strategy': "over_and_under_sampling",
+    'verbose': True}
 
 dataset = Poker(**dataset_parameters)
 
-model = keras.Sequential([
-    keras.layers.Dense(128, activation=tf.nn.relu),
-    keras.layers.Dense(64, activation=tf.nn.relu),
-    keras.layers.Dense(10, activation=tf.nn.softmax)
-])
+model = Sequential()
+model.add(Dense(512, input_shape=(dataset.X_train.shape[1],), name='input'))
+model.add(Dense(512, activation=tf.nn.relu, name='hidden1'))
+model.add(Dense(512, activation=tf.nn.relu, name='hidden2'))
+model.add(Dense(512, activation=tf.nn.relu, name='hidden3'))
+model.add(Dense(512, activation=tf.nn.relu, name='hidden4'))
+model.add(Dense(10, activation=tf.nn.softmax, name='output'))
 
 model_parameters = {
-    'optimizer': 'adam', 
-    'loss': 'sparse_categorical_crossentropy',
-    'metrics': ['accuracy']
+    #'optimizer':SGD(lr=0.1, momentum=0.9),
+    'optimizer':'adam',
+    #'loss':categorical_focal_loss(gamma=2.0, alpha=0.25),
+    'loss':'sparse_categorical_crossentropy',
+    'metrics': ["accuracy", f1]
     }
 
 model.compile(**model_parameters)
@@ -89,9 +125,11 @@ print("Training...")
 model.fit(
     dataset.X_train.values,
     dataset.y_train.values,
-    epochs=10,
-    #class_weight = {0:0.1995301487862177, 1:0.23664772727272726, 2:2.1035353535353534, 3:4.732954545454546, 4:25.48, 5:50.88018794048551, 6:69.41666666666667, 7:416.5, 8:7219.333333333333, 9:64974.0},
+    batch_size=8192,
+    epochs=20,
     validation_data=(dataset.X_validate, dataset.y_validate))
+
+print(model.summary())
 
 # Predict
 print("Predicting...")

@@ -1,0 +1,4 @@
+data_distribution: [0.6,0.2,0.2]
+sample_size: 0.02
+sampling_strategy: under_sampling
+verbose: True

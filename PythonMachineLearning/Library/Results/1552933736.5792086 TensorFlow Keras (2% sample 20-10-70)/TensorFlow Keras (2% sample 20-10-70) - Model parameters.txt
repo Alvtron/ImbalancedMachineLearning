@@ -1,0 +1,3 @@
+optimizer: adam
+loss: <function categorical_focal_loss.<locals>.focal_loss at 0x000001DF0EB55D08>
+metrics: [accuracy,<function f1 at 0x000001DF05C800D0>]
