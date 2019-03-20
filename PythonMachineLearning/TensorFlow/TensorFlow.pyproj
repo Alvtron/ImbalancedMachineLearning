@@ -22,9 +22,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AdaNet.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TensorFlow.py" />
     <Compile Include="TensorFlowHyperParameter.py" />
   </ItemGroup>

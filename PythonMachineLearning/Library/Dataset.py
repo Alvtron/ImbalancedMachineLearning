@@ -146,25 +146,26 @@ class Poker:
             sm = RandomUnderSampler(random_state = random_state, sampling_strategy = 'auto')
         elif(sampling_strategy == "over_sampling"):
             sm = RandomOverSampler(random_state = random_state, sampling_strategy = 'auto')
-        elif(sampling_strategy == "over_sampling_yamane"):
-            class_count = y.value_counts()
-            number_of_samples_per_class = {
-                0:max(400, class_count[0]),
-                1:max(400, class_count[1]),
-                2:max(400, class_count[2]),
-                3:max(400, class_count[3]),
-                4:max(400, class_count[4]),
-                5:max(400, class_count[5]),
-                6:max(400, class_count[6]),
-                7:max(398, class_count[7]),
-                8:max(367, class_count[8]),
-                9:max(219, class_count[9])}
-            sm = RandomOverSampler(random_state = random_state, sampling_strategy = number_of_samples_per_class)
         elif(sampling_strategy == "SMOTE"):
             sm = SMOTE(random_state = random_state, sampling_strategy = 'auto', k_neighbors = 1, n_jobs=8)
         elif(sampling_strategy == "over_and_under_sampling"):
             class_count = y.value_counts()
-            number_of_samples_per_class = { 0:100000, 1:100000, 2:100000, 3:100000, 4:100000, 5:100000, 6:100000, 7:100000, 8:100000, 9:100000 } 
+            number_of_samples_per_class = { 0:200000, 1:200000, 2:200000, 3:200000, 4:200000, 5:200000, 6:200000, 7:200000, 8:200000, 9:200000 } 
+            number_of_under_samples_per_class = {}
+            number_of_over_samples_per_class = {}
+            for index, value in class_count.iteritems():
+                if (value > number_of_samples_per_class[index]):
+                    number_of_under_samples_per_class[index] = number_of_samples_per_class[index]
+                elif(value < number_of_samples_per_class[index]):
+                    number_of_over_samples_per_class[index] = number_of_samples_per_class[index]
+            rus = RandomUnderSampler(random_state = random_state, sampling_strategy = number_of_under_samples_per_class)
+            X_res, y_res = rus.fit_sample(X = X.values, y = y.values)
+            X = pd.DataFrame(data = X_res, columns = Poker.feature_labels)
+            y = pd.Series(data = y_res.flatten())
+            sm = SMOTE(random_state = random_state, sampling_strategy = number_of_over_samples_per_class, k_neighbors = 1, n_jobs=8)
+        elif(sampling_strategy == "over_and_under_sampling_custom"):
+            class_count = y.value_counts()
+            number_of_samples_per_class = { 0:class_count[0], 1:class_count[1], 2:class_count[2], 3:class_count[3], 4:class_count[4], 5:class_count[5], 6:100000, 7:100000, 8:100000, 9:100000 } 
             number_of_under_samples_per_class = {}
             number_of_over_samples_per_class = {}
             for index, value in class_count.iteritems():
@@ -264,7 +265,7 @@ class Poker:
 
         #class_distribution_count = [0] * 156304800 + [1] * 131788800 + [2] * 14826240 + [3] * 6589440 + [4] * 1224000 + [5] * 612960 + [6] * 449280 + [7] * 74880 + [8] * 4320 + [9] * 480 
         #sample_weights_per_class = compute_class_weight(class_weight = 'balanced', classes = Poker.class_labels, y = class_distribution_count)
-        sample_weights_per_class = [0.1995301487862177, 0.23664772727272726, 2.1035353535353534, 4.732954545454546, 25.48, 50.88018794048551, 69.41666666666667, 416.5, 7219.333333333333, 64974.0]
+        sample_weights_per_class = {0:0.1995301487862177, 1:0.23664772727272726, 2:2.1035353535353534, 3:4.732954545454546, 4:25.48, 5:50.88018794048551, 6:69.41666666666667, 7:416.5, 8:7219.333333333333, 9:64974.0}
         train_sample_weights = []
         for class_value in y_train:
             train_sample_weights.append(sample_weights_per_class[class_value])
@@ -275,7 +276,8 @@ class Poker:
         self.X_test = X_test
         self.y_train = y_train
         self.y_test = y_test
-        self.train_sample_weights = train_sample_weights
+        self.weight_per_class = sample_weights_per_class
+        self.weight_per_sample = train_sample_weights
         self.training_size = data_distribution[0]
         if (len(data_distribution) == 2):
             self.testing_size = data_distribution[1]
