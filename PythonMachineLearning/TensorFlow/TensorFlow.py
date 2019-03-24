@@ -96,7 +96,7 @@ model_parameters = {
     #'optimizer':Adamax(), # jiggles less at 99%
     'optimizer':Adam(lr=1e-5), # jiggles less at 99%, but spikes sometimes. More accurate.
     #'optimizer':Nadam(), # spikes a lot. Unuseable unless learning rate is adjusted.
-    #'loss':categorical_focal_loss(gamma=2.0, alpha=0.25),
+    #'loss':categorical_focal_loss(gamma=4.0, alpha=0.25),
     #'loss':f1_loss,
     'loss':'sparse_categorical_crossentropy',
     'metrics':["accuracy"]

@@ -2,16 +2,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>1d8f5ac9-7b80-4052-a099-eea630cedee9</ProjectGuid>
+    <ProjectGuid>0f50f720-5c7a-4c50-a90f-5b5bc99aed66</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>TensorFlow.py</StartupFile>
+    <StartupFile>SVC.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>TensorFlow</Name>
-    <RootNamespace>TensorFlow</RootNamespace>
-    <InterpreterId>CondaEnv|CondaEnv|tf-gpu</InterpreterId>
+    <Name>SVM</Name>
+    <RootNamespace>SVM</RootNamespace>
+    <InterpreterId>CondaEnv|CondaEnv|machinelearning</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,8 +22,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="TensorFlow.py" />
-    <Compile Include="TensorFlowHyperParameter.py" />
+    <Compile Include="LinearSVC.py" />
+    <Compile Include="SVC.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|machinelearning" />
+    <InterpreterReference Include="CondaEnv|CondaEnv|svm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.pyproj">
@@ -36,10 +40,6 @@
       <Project>{30992b38-f716-4ee7-bf91-1e922b837a82}</Project>
       <Private>True</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <InterpreterReference Include="CondaEnv|CondaEnv|machinelearning" />
-    <InterpreterReference Include="CondaEnv|CondaEnv|tf-gpu" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
