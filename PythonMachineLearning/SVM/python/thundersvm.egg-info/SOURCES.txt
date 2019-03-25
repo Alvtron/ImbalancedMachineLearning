@@ -1,0 +1,10 @@
+README.md
+setup.py
+svm.py
+thundersvm.dll
+thundersvmScikit.py
+thundersvm.egg-info/PKG-INFO
+thundersvm.egg-info/SOURCES.txt
+thundersvm.egg-info/dependency_links.txt
+thundersvm.egg-info/requires.txt
+thundersvm.egg-info/top_level.txt
