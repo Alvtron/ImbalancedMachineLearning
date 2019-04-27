@@ -1,0 +1,60 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>3d74b006-f878-4d0b-9357-6808755779ca</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>RandomForest.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>PythonMachineLearning</Name>
+    <RootNamespace>PythonMachineLearning</RootNamespace>
+    <InterpreterId>Global|VisualStudio|machinelearning</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AdaBoost.py" />
+    <Compile Include="CatBoost.py" />
+    <Compile Include="LightGBM.py" />
+    <Compile Include="LinearSVC.py" />
+    <Compile Include="MultiClassificationTrainer.py" />
+    <Compile Include="RandomForest.py" />
+    <Compile Include="SGD.py" />
+    <Compile Include="SVC.py" />
+    <Compile Include="TensorFlow.py" />
+    <Compile Include="TensorFlowHyperParameter.py" />
+    <Compile Include="ThunderSVM.py" />
+    <Compile Include="thundersvmScikit.py" />
+    <Compile Include="XGBoost.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|machinelearning" />
+    <InterpreterReference Include="Global|VisualStudio|svm" />
+    <InterpreterReference Include="Global|VisualStudio|tf-gpu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Library\Library.pyproj">
+      <Name>Library</Name>
+      <Project>{c6283161-729f-4a65-9ab8-bed11cad9ef3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

@@ -12,6 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>Library</Name>
     <RootNamespace>Library</RootNamespace>
+    <InterpreterId>Global|VisualStudio|machinelearning</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,15 +33,19 @@
     <Content Include="Dataset\uci.poker.training.csv" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CollectionExtensions.py">
+    <Compile Include="Dataset.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Dataset.py">
+    <Compile Include="EarlyStopping.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Evaluation.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MultiClassificationTrainer.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|machinelearning" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

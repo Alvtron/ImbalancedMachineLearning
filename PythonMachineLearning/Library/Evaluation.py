@@ -8,16 +8,27 @@ import imblearn.metrics
 import sklearn.metrics
 from matplotlib import pyplot as plt
 import json
-from CollectionExtensions import flatten
+import collections
+
+def flatten(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, collections.MutableMapping):
+            items.extend(flatten(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
 
 class Evaluator:
-    def __init__(self, title):
+    def __init__(self, title, save_path):
         now = time.time()
         self.title = title
-        self.file_path = f"../Library/Results/{now} {title}/{title}"
-        os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+        self.save_directory_path = save_path
+        self.folder_path = f"{save_path}/{now} {title}/"
+        os.makedirs(os.path.dirname(self.folder_path), exist_ok=True)
 
-    def plot_confusion_matrix(self, observed, prediction, classes, normalize=False, cmap=plt.cm.Blues):
+    def create_confusion_matrix(self, observed, prediction, classes, normalize=False, cmap=plt.cm.Blues):
         """
         This function plots the confusion matrix. Normalization can be applied by setting `normalize=True`.
         """
@@ -29,7 +40,7 @@ class Evaluator:
 
         plt.figure()
         plt.imshow(cnf_matrix, interpolation = 'nearest', cmap = cmap)
-        plt.title(f'{self.title} - Confusion matrix')
+        #plt.title(f'{self.title} - Confusion matrix')
         plt.colorbar()
         tick_marks = np.arange(len(classes))
         plt.xticks(tick_marks, classes, rotation=45)
@@ -42,50 +53,64 @@ class Evaluator:
                      horizontalalignment="center",
                      color="white" if cnf_matrix[i, j] > thresh else "black")
 
-        plt.ylabel('True label')
-        plt.xlabel('Predicted label')
+        plt.ylabel('Observed class')
+        plt.xlabel('Predicted class')
         plt.tight_layout()
-        plt.savefig(fname = f'{self.file_path} - Confusion matrix.png', format = 'png', dpi = 300)
-        plt.savefig(fname = f'{self.file_path} - Confusion matrix.svg', format = 'svg')
+        plt.savefig(fname = f'{self.folder_path}confusion_matrix.png', format = 'png', dpi = 300)
+        plt.savefig(fname = f'{self.folder_path}confusion_matrix.pdf', format = 'pdf')
 
-    def plot_evaluation_metric_results(self, metric_results):
+    def save_evaluation_metric_results(self, metric_results):
+        if (isinstance(metric_results, dict)):
+            self.append_to_file(flatten(metric_results, sep='_').items(), "metric_results.txt")
+        elif (isinstance(metric_results, list)):
+            self.append_to_file(metric_results, "evaluation_metrics.txt")
+        else:
+            raise ValueError("Metrics must be of type dictionary or list.")
+
+    def create_evaluation_metric_results(self, metric_results, xlabel = 'iteration', ylabel = 'score'):
         plt.figure()
-        plt.xlabel('n')
-        plt.ylabel('Value')
-        plt.title(f'{self.title} - Evaluation metrics')
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        #plt.title(f'{self.title} - Evaluation metrics')
         plt.axhline(y = 0, linewidth=0.5, color = 'k')
-        for type, result in flatten(metric_results, sep='_').items():
-            line, = plt.plot(result, label=f"{type}")
-            plt.legend()
-        plt.savefig(fname = f'{self.file_path} - Evaluation metrics.png', format = 'png', dpi = 300)
-        plt.savefig(fname = f'{self.file_path} - Evaluation metrics.svg', format = 'svg')
 
-    def print_advanced_metrics(self, prediction, observed, class_labels, class_descriptions):
-        accuracy = sklearn.metrics.accuracy_score(prediction, observed)
-        balanced_accuracy = sklearn.metrics.balanced_accuracy_score(prediction, observed)
-        sensitivity = imblearn.metrics.sensitivity_score(prediction, observed, labels = class_labels, average = 'macro')
-        specificity = imblearn.metrics.specificity_score(prediction, observed, labels = class_labels, average = 'macro')
-        geometric_mean = imblearn.metrics.geometric_mean_score(prediction, observed, labels = class_labels, average = 'macro')
-        report = sklearn.metrics.classification_report(observed, prediction, target_names = class_descriptions)
+        if (isinstance(metric_results, dict)):
+            for type, result in flatten(metric_results, sep='_').items():
+                line, = plt.plot(result, label=f"{type}")
+                plt.legend()
+        elif (isinstance(metric_results, list)):
+            index = 1
+            for result in metric_results:
+                plt.plot(index, result)
+                index += 1
+        else:
+            raise ValueError("Metrics must be of type dictionary or list.")
+        plt.savefig(fname = f'{self.folder_path}evaluation_metrics.png', format = 'png', dpi = 300)
+        plt.savefig(fname = f'{self.folder_path}evaluation_metrics.pdf', format = 'pdf')
+
+    def save_advanced_metrics(self, observed, prediction, class_labels, class_descriptions):
+        accuracy = sklearn.metrics.accuracy_score(observed, prediction)
+        balanced_accuracy = sklearn.metrics.balanced_accuracy_score(observed, prediction)
+        sensitivity = imblearn.metrics.sensitivity_score(observed, prediction, labels = class_labels, average = 'macro')
+        specificity = imblearn.metrics.specificity_score(observed, prediction, labels = class_labels, average = 'macro')
+        geometric_mean = imblearn.metrics.geometric_mean_score(observed, prediction, labels = class_labels, average = 'macro')
+        report = sklearn.metrics.classification_report(observed, prediction, labels = class_labels, target_names = class_descriptions)
         result = f"Accuracy: {accuracy}\nBalanced Accuracy: {balanced_accuracy}\nSensitivity: {sensitivity}\nSpecificity: {specificity}\nGeometric Mean: {geometric_mean}\n{report}"
         print(result)
-        with open(f"{self.file_path} - Metrics.txt", "w") as text_file:
+        with open(f"{self.folder_path}score.txt", "w") as text_file:
             text_file.write(result)
 
-    def write_model_parameters_to_file(self, parameters):
-        with open(f"{self.file_path} - Model parameters.txt", "a") as text_file:
-            for key, value in parameters.items():
-                if (isinstance(value, list)):
-                    list_string = ",".join(map(str, value))
-                    text_file.write(f'{key}: [{list_string}]\n')
-                else:
-                    text_file.write(f'{key}: {value}\n')
-
-    def write_dataset_parameters_to_file(self, parameters):
-        with open(f"{self.file_path} - Dataset parameters.txt", "a") as text_file:
-            for key, value in parameters.items():
-                if (isinstance(value, list)):
-                    list_string = ",".join(map(str, value))
-                    text_file.write(f'{key}: [{list_string}]\n')
-                else:
-                    text_file.write(f'{key}: {value}\n')
+    def append_to_file(self, object, file_name):
+        with open(f"{self.folder_path}{file_name}", "a+") as text_file:
+            if (isinstance(object, str)):
+                text_file.write(f'{object}\n')
+            elif (isinstance(object, dict)):
+                for key, value in object.items():
+                    if (isinstance(value, list)):
+                        list_string = ",".join(map(str, value))
+                        text_file.write(f'{key}: [{list_string}]\n')
+                    else:
+                        text_file.write(f'{key}: {value}\n')
+            elif (isinstance(object, list)):
+                for value in object:
+                    text_file.write(f'{value}\n')

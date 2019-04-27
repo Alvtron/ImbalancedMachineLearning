@@ -163,7 +163,7 @@ class Poker:
             X = pd.DataFrame(data = X_res, columns = Poker.feature_labels)
             y = pd.Series(data = y_res.flatten())
             sm = SMOTE(random_state = random_state, sampling_strategy = number_of_over_samples_per_class, k_neighbors = 1, n_jobs=8)
-        elif(sampling_strategy == "over_and_under_sampling_custom"):
+        elif(sampling_strategy == "4SMOTE"):
             class_count = y.value_counts()
             number_of_samples_per_class = { 0:class_count[0], 1:class_count[1], 2:class_count[2], 3:class_count[3], 4:class_count[4], 5:class_count[5], 6:100000, 7:100000, 8:100000, 9:100000 } 
             number_of_under_samples_per_class = {}
@@ -178,23 +178,15 @@ class Poker:
             X = pd.DataFrame(data = X_res, columns = Poker.feature_labels)
             y = pd.Series(data = y_res.flatten())
             sm = SMOTE(random_state = random_state, sampling_strategy = number_of_over_samples_per_class, k_neighbors = 1, n_jobs=8)
-        elif(sampling_strategy == "yamane"):
+        elif(sampling_strategy == "WSMOTE"):
             class_count = y.value_counts()
-            number_of_samples_per_class = { 0:400, 1:400, 2:400, 3:400, 4:400, 5:400, 6:400, 7:398, 8:367, 9:219 } 
-            number_of_under_samples_per_class = {}
-            number_of_over_samples_per_class = {}
+            class_sum = sum(class_count)
+            number_of_samples_per_class = {}
             for index, value in class_count.iteritems():
-                if (value > number_of_samples_per_class[index]):
-                    number_of_under_samples_per_class[index] = number_of_samples_per_class[index]
-                elif(value < number_of_samples_per_class[index]):
-                    number_of_over_samples_per_class[index] = number_of_samples_per_class[index]
-            rus = RandomUnderSampler(random_state = random_state, sampling_strategy = number_of_under_samples_per_class)
-            X_res, y_res = rus.fit_sample(X = X.values, y = y.values)
-            X = pd.DataFrame(data = X_res, columns = Poker.feature_labels)
-            y = pd.Series(data = y_res.flatten())
-            sm = RandomOverSampler(random_state = random_state, sampling_strategy = number_of_over_samples_per_class)
+                number_of_samples_per_class.update({ index : value + math.floor((class_sum / value) * 0.2) })
+            sm = SMOTE(random_state = random_state, sampling_strategy = number_of_samples_per_class, k_neighbors = 1, n_jobs=8)
         else:
-            raise Exception("Wrong sampling strategy. Must be 'under_sampling' or 'over_sampling'")
+            raise Exception("Sampling strategy does not exist.")
         X_res, y_res = sm.fit_sample(X = X.values, y = y.values)
         if (verbose):
             print('After sampling, number of samples: {}'.format(X_res.shape[0]))

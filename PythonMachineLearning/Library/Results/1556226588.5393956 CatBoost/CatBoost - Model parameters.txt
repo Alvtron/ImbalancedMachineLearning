@@ -1,0 +1,5 @@
+task_type: GPU
+thread_count: 8
+classes_count: 10
+objective: MultiClassOneVsAll
+eval_metric: TotalF1

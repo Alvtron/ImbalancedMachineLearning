@@ -1,4 +1,0 @@
-data_distribution: [0.3,0.1,0.6]
-sample_size: 0.02
-sampling_strategy: None
-verbose: False

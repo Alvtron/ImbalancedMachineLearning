@@ -1,0 +1,14 @@
+C: 1.0
+cache_size: 4096
+class_weight: {0: 0.1995301487862177, 1: 0.23664772727272726, 2: 2.1035353535353534, 3: 4.732954545454546, 4: 25.48, 5: 50.88018794048551, 6: 69.41666666666667, 7: 416.5, 8: 7219.333333333333, 9: 64974.0}
+coef0: 0.0
+decision_function_shape: ovr
+degree: 3
+gamma: 0.1
+kernel: linear
+max_iter: -1
+probability: False
+random_state: 42
+shrinking: True
+tol: 0.001
+verbose: True
