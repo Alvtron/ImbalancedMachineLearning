@@ -59,32 +59,18 @@ class Evaluator:
         plt.savefig(fname = f'{self.folder_path}confusion_matrix.png', format = 'png', dpi = 300)
         plt.savefig(fname = f'{self.folder_path}confusion_matrix.pdf', format = 'pdf')
 
-    def save_evaluation_metric_results(self, metric_results):
-        if (isinstance(metric_results, dict)):
-            self.append_to_file(flatten(metric_results, sep='_').items(), "metric_results.txt")
-        elif (isinstance(metric_results, list)):
-            self.append_to_file(metric_results, "evaluation_metrics.txt")
-        else:
-            raise ValueError("Metrics must be of type dictionary or list.")
-
     def create_evaluation_metric_results(self, metric_results, xlabel = 'iteration', ylabel = 'score'):
         plt.figure()
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         #plt.title(f'{self.title} - Evaluation metrics')
-        plt.axhline(y = 0, linewidth=0.5, color = 'k')
 
         if (isinstance(metric_results, dict)):
-            for type, result in flatten(metric_results, sep='_').items():
+            for type, result in flatten(metric_results).items():
                 line, = plt.plot(result, label=f"{type}")
                 plt.legend()
-        elif (isinstance(metric_results, list)):
-            index = 1
-            for result in metric_results:
-                plt.plot(index, result)
-                index += 1
         else:
-            raise ValueError("Metrics must be of type dictionary or list.")
+            plt.plot(metric_results)
         plt.savefig(fname = f'{self.folder_path}evaluation_metrics.png', format = 'png', dpi = 300)
         plt.savefig(fname = f'{self.folder_path}evaluation_metrics.pdf', format = 'pdf')
 

@@ -1,0 +1,4 @@
+Best score: 0.4616619630401835
+Best iteration: 119
+Training time (seconds): 2264.9380378723145
+Testing time (seconds): 161.87792563438416

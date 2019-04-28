@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3d74b006-f878-4d0b-9357-6808755779ca</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RandomForest.py</StartupFile>
+    <StartupFile>XGBoost.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
