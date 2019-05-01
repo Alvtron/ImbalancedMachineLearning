@@ -1,0 +1,4 @@
+{
+"meta":{"launch_mode":"Train","name":"experiment","iteration_count":100000,"learn_metrics":[{"best_value":"Max","name":"GeometricMean"},{"best_value":"Max","name":"MultiClassOneVsAll"}],"test_sets":["test"],"test_metrics":[{"best_value":"Max","name":"GeometricMean"},{"best_value":"Max","name":"MultiClassOneVsAll"}],"learn_sets":["learn"]},
+"iterations":[
+]}

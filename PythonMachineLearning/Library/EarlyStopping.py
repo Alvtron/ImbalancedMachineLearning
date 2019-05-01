@@ -32,7 +32,7 @@ class EarlyStopping(ClassifierMixin):
         on a separate dataset using `scorer`
         """
         est = self._make_estimator()
-        self.scores_ = defaultdict(list)
+        self.eval_results = defaultdict(list)
 
         best_est = None
         self.best_score_ = 0
@@ -48,19 +48,19 @@ class EarlyStopping(ClassifierMixin):
             else:
                 est.fit(X, y, sample_weight = self.sample_weight)
 
-            _scores = self.scorer(est)
+            eval_metrics = self.scorer(est)
 
             # Create score string and save results
             score_string = ""
-            for metric, score in _scores.items():
-                self.scores_[metric].append(score)
+            for metric, score in eval_metrics.items():
+                self.eval_results[metric].append(score)
                 score_string += f' - {metric}: {score}'
 
             # Check if current estimator is better than the previous, save if true
             if (iteration is 1
-                or ((self.higher_is_better and _scores[self.monitor_score] > self.best_score_)
-                or (not self.higher_is_better and _scores[self.monitor_score] < self.best_score_))):
-                self.best_score_ = _scores[self.monitor_score]
+                or ((self.higher_is_better and eval_metrics[self.monitor_score] > self.best_score_)
+                or (not self.higher_is_better and eval_metrics[self.monitor_score] < self.best_score_))):
+                self.best_score_ = eval_metrics[self.monitor_score]
                 best_est = est
                 self.best_iteration_ = iteration
                 iterations_since_last_score = 0

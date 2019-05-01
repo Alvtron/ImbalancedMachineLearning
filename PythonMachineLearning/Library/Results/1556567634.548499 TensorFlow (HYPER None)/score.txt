@@ -1,0 +1,21 @@
+Accuracy: 0.9473848990989077
+Balanced Accuracy: 0.8208912714497864
+Sensitivity: 0.8208912714497864
+Specificity: 0.9926348831526799
+Geometric Mean: 0.9026878260598253
+                                                           precision    recall  f1-score   support
+
+          0: Nothing in hand; not a recognized poker hand       0.97      0.97      0.97   2189982
+   1: One pair; one pair of equal ranks within five cards       0.99      0.91      0.95   1845045
+ 2: Two pairs; two pairs of equal ranks within five cards       0.89      0.98      0.93    207567
+  3: Three of a kind; three equal ranks within five cards       0.98      1.00      0.99     92252
+4: Straight; five cards, sequentially ranked with no gaps       0.13      0.99      0.22     15423
+                  5: Flush; five cards with the same suit       1.00      0.98      0.99      8588
+     6: Full house; pair + different rank three of a kind       1.00      1.00      1.00      6290
+    7: Four of a kind; four equal ranks within five cards       0.96      1.00      0.98      1049
+                      8: Straight flush; straight + flush       0.01      0.38      0.02        53
+    9: Royal flush; {Ace, King, Queen, Jack, Ten} + flush       0.00      0.00      0.00         7
+
+                                                micro avg       0.95      0.95      0.95   4366256
+                                                macro avg       0.69      0.82      0.71   4366256
+                                             weighted avg       0.97      0.95      0.96   4366256

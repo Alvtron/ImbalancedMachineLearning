@@ -178,12 +178,19 @@ class Poker:
             X = pd.DataFrame(data = X_res, columns = Poker.feature_labels)
             y = pd.Series(data = y_res.flatten())
             sm = SMOTE(random_state = random_state, sampling_strategy = number_of_over_samples_per_class, k_neighbors = 1, n_jobs=8)
-        elif(sampling_strategy == "WSMOTE"):
+        elif(sampling_strategy == "WSMOTE2"):
             class_count = y.value_counts()
             class_sum = sum(class_count)
             number_of_samples_per_class = {}
             for index, value in class_count.iteritems():
                 number_of_samples_per_class.update({ index : value + math.floor((class_sum / value) * 0.2) })
+            sm = SMOTE(random_state = random_state, sampling_strategy = number_of_samples_per_class, k_neighbors = 1, n_jobs=8)
+        elif(sampling_strategy == "WSMOTE4"):
+            class_count = y.value_counts()
+            class_sum = sum(class_count)
+            number_of_samples_per_class = {}
+            for index, value in class_count.iteritems():
+                number_of_samples_per_class.update({ index : value + math.floor((class_sum / value) * 0.4) })
             sm = SMOTE(random_state = random_state, sampling_strategy = number_of_samples_per_class, k_neighbors = 1, n_jobs=8)
         else:
             raise Exception("Sampling strategy does not exist.")

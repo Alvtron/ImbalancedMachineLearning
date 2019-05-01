@@ -1,23 +1,27 @@
+from sklearn import svm
 from Evaluation import Evaluator
 from Dataset import Poker
-import scipy as sp
-import numpy as np
-import matplotlib.pyplot as plt
-from imblearn.metrics import geometric_mean_score
-from sklearn.metrics import make_scorer, confusion_matrix, f1_score, precision_score, recall_score
-from sklearn import svm
-from sklearn.model_selection import cross_validate, cross_val_score, PredefinedSplit
+from EarlyStopping import EarlyStopping
+from matplotlib import pyplot as plt
+import time
 
-# Create custom metric
-gmean_scorer = make_scorer(score_func=geometric_mean_score, greater_is_better=True)
+from sklearn.metrics import accuracy_score
+from imblearn.metrics import geometric_mean_score
+from sklearn.metrics import make_scorer
+from functools import partial
+
+def scorer(X, y, classifier):
+    prediction = classifier.predict(X)
+    return { "gmean": geometric_mean_score(y, prediction, average = 'macro'), "accuracy":accuracy_score(y, prediction) }
 
 # Importing dataset
 dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
-    'sample_size': 0.01,
-    #'sampling_strategy': "SMOTE", # no significant improvement
-    #'sampling_strategy': "over_and_under_sampling", # 10k and 20k shows promising for the first 8 classes, and 30-60% for class 9, but no hits on last class.
-    #'sampling_strategy': "over_and_under_sampling_custom", # best result. 70% and 0% on two last classes, respectively.
+    'sample_size': 0.02,
+    #'sampling_strategy': "SMOTE",
+    #'sampling_strategy': "over_and_under_sampling",
+    #'sampling_strategy': "4SMOTE",
+    #'sampling_strategy': "WSMOTE",
     'sampling_strategy': None,
     'verbose': False}
 
@@ -37,39 +41,47 @@ model_parameters = {
     'random_state':42,
     'shrinking':True,
     'tol':0.001,
-    'verbose':False}
+    'verbose':True}
 
-clf = svm.SVC(**model_parameters)
+model = svm.SVC(**model_parameters)
 
 # Training
-print("Training...")
-scores = cross_validate(
-    estimator=clf,
-    X=np.concatenate((dataset.X_train.values, dataset.X_validate.values)),
-    y=np.concatenate((dataset.y_train.values, dataset.y_validate.values)),
-    cv=PredefinedSplit(test_fold=[-1] * len(dataset.X_train.values) + [0] * len(dataset.X_validate.values)),
-    scoring=gmean_scorer,
-    return_train_score=False,
-    n_jobs=-1,
-    verbose=False)
+print('Training...')
 
-# Predict
-print("Predicting...")
-predictions = saved_model.predict(dataset.X_test.values)
-y_pred = []
+#model.fit(
+#    X = dataset.X_train,
+#    y = dataset.y_train)
 
-for prediction in predictions:
-    y_pred.append(np.argmax(prediction))
+early = EarlyStopping(
+    model,
+    max_n_estimators=1000,
+    scorer=partial(scorer, dataset.X_validate, dataset.y_validate),
+    monitor_score = "gmean",
+    patience = 25,
+    higher_is_better = True)
+
+start_time = time.time()
+early.fit(dataset.X_train, dataset.y_train)
+elapsed_time_training = time.time() - start_time
+
+# Predicting
+print('Predicting...')
+start_time = time.time()
+y_pred = early.estimator.predict(dataset.X_test)
+elapsed_time_testing = time.time() - start_time
 
 # Analytics
-metric_results = model.history.history,
-title = "SVC ({0:0.0f}% sample {1:0.0f}-{2:0.0f}-{3:0.0f})".format(dataset.sample_size * 100, dataset.training_size * 100, dataset.validation_size * 100, dataset.testing_size * 100)
-
+title = "RandomForest"
+save_path = "C:/Users/thoma/source/repos/PythonMachineLearning/PythonMachineLearning/Library/Results"
 print('Analyzing...')
-evaluator = Evaluator(title)
-evaluator.write_model_parameters_to_file(model_parameters)
-evaluator.write_dataset_parameters_to_file(dataset_parameters)
-evaluator.plot_evaluation_metric_results(scores)
-evaluator.plot_confusion_matrix(y_pred, dataset.y_test, dataset.class_labels, normalize = True)
-evaluator.print_advanced_metrics(y_pred, dataset.y_test, dataset.class_labels, dataset.class_descriptions)
+evaluator = Evaluator(title, save_path)
+evaluator.append_to_file(f'Best iteration: {early.best_iteration_}', "info.txt")
+evaluator.append_to_file(f'Training time (seconds): {elapsed_time_training}', "info.txt")
+evaluator.append_to_file(f'Testing time (seconds): {elapsed_time_testing}', "info.txt")
+evaluator.append_to_file(dataset_parameters, "dataset_parameters.txt")
+evaluator.append_to_file(model_parameters, "model_parameters.txt")
+evaluator.save_advanced_metrics(dataset.y_test, y_pred, dataset.class_labels, dataset.class_descriptions)
+evaluator.append_to_file(early.scores_, "metric_results.txt")
+evaluator.create_evaluation_metric_results(early.scores_, xlabel='number of trees', ylabel='metric score')
+evaluator.create_confusion_matrix(dataset.y_test, y_pred, dataset.class_labels, normalize = True)
 plt.show()

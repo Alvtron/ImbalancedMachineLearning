@@ -1,15 +1,11 @@
-from Evaluation import Evaluator
-import MultiClassificationTrainer as mct
 from xgboost import XGBClassifier
+from Evaluation import Evaluator
 from Dataset import Poker
 from matplotlib import pyplot as plt
 import numpy as np
 import time
-
 from sklearn.metrics import accuracy_score
 from imblearn.metrics import geometric_mean_score
-from sklearn.metrics import make_scorer
-from functools import partial
 
 def focal_binary_object(pred,dtrain,gamma_indct=1.2):
     # retrieve data from dtrain matrix
@@ -42,10 +38,10 @@ def gmean_metric(preds, dtrain):
 dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
     'sample_size': 0.02,
-    #'sampling_strategy': "SMOTE",
+    'sampling_strategy': "SMOTE",
     #'sampling_strategy': "over_and_under_sampling",
     #'sampling_strategy': "4SMOTE",
-    'sampling_strategy': "WSMOTE",
+    #'sampling_strategy': "WSMOTE",
     #'sampling_strategy': None,
     'verbose': False}
 
@@ -93,7 +89,6 @@ y_pred = model.predict(dataset.X_test)
 elapsed_time_testing = time.time() - start_time
 
 # Analytics
-
 eval_results = {
     'mlogloss': model.evals_result()['validation_0']['mlogloss'],
     'gmean': np.absolute(model.evals_result()['validation_0']['gmean'])}
@@ -109,6 +104,6 @@ evaluator.append_to_file(dataset_parameters, "dataset_parameters.txt")
 evaluator.append_to_file(model_parameters, "model_parameters.txt")
 evaluator.save_advanced_metrics(dataset.y_test, y_pred, dataset.class_labels, dataset.class_descriptions)
 evaluator.append_to_file(eval_results, "metric_results.txt")
-evaluator.create_evaluation_metric_results(eval_results, xlabel='number of trees', ylabel='geometric mean')
+evaluator.create_evaluation_metric_results(eval_results, xlabel='number of trees', ylabel='metric score')
 evaluator.create_confusion_matrix(dataset.y_test, y_pred, dataset.class_labels, normalize = True)
 plt.show()

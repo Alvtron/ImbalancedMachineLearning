@@ -1,0 +1,8 @@
+task_type: GPU
+thread_count: 8
+classes_count: 10
+num_trees: 100000
+objective: MultiClassOneVsAll
+eval_metric: TotalF1
+od_type: Iter
+od_wait: 25

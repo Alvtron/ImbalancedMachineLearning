@@ -1,5 +1,5 @@
-from Evaluation import Evaluator
 from sklearn.ensemble import RandomForestClassifier
+from Evaluation import Evaluator
 from Dataset import Poker
 from EarlyStopping import EarlyStopping
 from matplotlib import pyplot as plt
@@ -84,7 +84,7 @@ evaluator.append_to_file(f'Testing time (seconds): {elapsed_time_testing}', "inf
 evaluator.append_to_file(dataset_parameters, "dataset_parameters.txt")
 evaluator.append_to_file(model_parameters, "model_parameters.txt")
 evaluator.save_advanced_metrics(dataset.y_test, y_pred, dataset.class_labels, dataset.class_descriptions)
-evaluator.append_to_file(early.scores_, "metric_results.txt")
-evaluator.create_evaluation_metric_results(early.scores_, xlabel='number of trees', ylabel='geometric mean')
+evaluator.append_to_file(early.eval_results, "metric_results.txt")
+evaluator.create_evaluation_metric_results(early.eval_results, xlabel='number of trees', ylabel='geometric mean')
 evaluator.create_confusion_matrix(dataset.y_test, y_pred, dataset.class_labels, normalize = True)
 plt.show()

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3d74b006-f878-4d0b-9357-6808755779ca</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>XGBoost.py</StartupFile>
+    <StartupFile>LightGBM.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -32,6 +32,9 @@
     <Compile Include="SVC.py" />
     <Compile Include="TensorFlow.py" />
     <Compile Include="TensorFlowHyperParameter.py" />
+    <Compile Include="TensorFlowMultiClassMetrics.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ThunderSVM.py" />
     <Compile Include="thundersvmScikit.py" />
     <Compile Include="XGBoost.py" />
@@ -40,6 +43,7 @@
     <InterpreterReference Include="Global|VisualStudio|machinelearning" />
     <InterpreterReference Include="Global|VisualStudio|svm" />
     <InterpreterReference Include="Global|VisualStudio|tf-gpu" />
+    <InterpreterReference Include="Global|VisualStudio|tf2.0-gpu" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.pyproj">
