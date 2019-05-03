@@ -1,0 +1,2 @@
+Training time (seconds): 13951.535748720169
+Testing time (seconds): 0.6203532218933105

@@ -1,0 +1,12 @@
+verbose: 2
+random_state: 42
+penalty: l2
+loss: squared_hinge
+C: 1.0
+dual: True
+class_weight: {0: 0.1995301487862177, 1: 0.23664772727272726, 2: 2.1035353535353534, 3: 4.732954545454546, 4: 25.48, 5: 50.88018794048551, 6: 69.41666666666667, 7: 416.5, 8: 7219.333333333333, 9: 64974.0}
+fit_intercept: False
+intercept_scaling: 1
+max_iter: 10000
+multi_class: ovr
+tol: 1e-05

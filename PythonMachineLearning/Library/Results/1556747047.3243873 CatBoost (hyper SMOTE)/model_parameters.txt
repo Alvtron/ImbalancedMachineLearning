@@ -1,0 +1,11 @@
+task_type: CPU
+thread_count: 8
+classes_count: 10
+num_trees: 100000
+learning_rate: 0.55
+max_depth: 10
+l2_leaf_reg: 1
+objective: MultiClass
+eval_metric: <__main__.GeometricMean object at 0x000002413AB67A90>
+od_type: Iter
+od_wait: 50

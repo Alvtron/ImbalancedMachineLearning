@@ -1,0 +1,12 @@
+verbose: 1
+random_state: 42
+max_iter: 10
+C: 1.0
+loss: hinge
+criterion: accuracy
+tol: 0.001
+permute: True
+shrinking: True
+warm_start: False
+callback: None
+n_calls: 100

@@ -1,0 +1,17 @@
+verbose: 1
+max_iter: 100
+n_jobs: -1
+random_state: 42
+class_weight: {0: 0.1995301487862177, 1: 0.23664772727272726, 2: 2.1035353535353534, 3: 4.732954545454546, 4: 25.48, 5: 50.88018794048551, 6: 69.41666666666667, 7: 416.5, 8: 7219.333333333333, 9: 64974.0}
+loss: hinge
+penalty: l2
+alpha: 0.0001
+l1_ratio: 0.15
+fit_intercept: False
+average: False
+epsilon: 0.1
+learning_rate: constant
+eta0: 0.9
+power_t: 0.5
+shuffle: False
+tol: None

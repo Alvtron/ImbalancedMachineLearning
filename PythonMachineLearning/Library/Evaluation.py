@@ -9,6 +9,7 @@ import sklearn.metrics
 from matplotlib import pyplot as plt
 import json
 import collections
+import csv
 
 def flatten(d, parent_key='', sep='_'):
     items = []
@@ -100,3 +101,15 @@ class Evaluator:
             elif (isinstance(object, list)):
                 for value in object:
                     text_file.write(f'{value}\n')
+
+    def save_dict_to_file(self, dictionary, file_name):
+        with open(f"{self.folder_path}{file_name}", "a+") as text_file:
+            writer = csv.writer(text_file)
+            for key, val in dictionary.items():
+                writer.writerow([key, val])
+
+    def save_eval_scores_to_file(self, dictionary, file_name):
+        with open(f"{self.folder_path}{file_name}", "a+") as text_file:
+            writer = csv.writer(text_file)
+            writer.writerow(dictionary.keys())
+            writer.writerows(zip(*dictionary.values()))

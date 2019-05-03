@@ -1,87 +1,81 @@
-from sklearn import svm
+from sklearn.svm import SVC
+from sklearn.ensemble import BaggingClassifier
 from Evaluation import Evaluator
 from Dataset import Poker
-from EarlyStopping import EarlyStopping
 from matplotlib import pyplot as plt
 import time
 
-from sklearn.metrics import accuracy_score
-from imblearn.metrics import geometric_mean_score
-from sklearn.metrics import make_scorer
-from functools import partial
-
-def scorer(X, y, classifier):
-    prediction = classifier.predict(X)
-    return { "gmean": geometric_mean_score(y, prediction, average = 'macro'), "accuracy":accuracy_score(y, prediction) }
+from sklearn.preprocessing import MinMaxScaler
 
 # Importing dataset
 dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
     'sample_size': 0.02,
+    'min_max_scaling': True,
     #'sampling_strategy': "SMOTE",
-    #'sampling_strategy': "over_and_under_sampling",
     #'sampling_strategy': "4SMOTE",
-    #'sampling_strategy': "WSMOTE",
-    'sampling_strategy': None,
+    #'sampling_strategy': "WSMOTE2",
+    #'sampling_strategy': "UWSMOTE",
+    #'sampling_strategy': None,
     'verbose': False}
 
 dataset = Poker(**dataset_parameters)
 
 model_parameters = {
-    'C':1.0,
-    'cache_size':4096,
-    'class_weight':dataset.weight_per_class,
-    'coef0':0.0,
-    'decision_function_shape':'ovr',
-    'degree':3,
-    'gamma':'scale',
-    'kernel':'rbf',
-    'max_iter':-1,
-    'probability':False,
-    'random_state':42,
-    'shrinking':True,
-    'tol':0.001,
-    'verbose':True}
+    'random_state': 42,
+    'verbose': True,
+    'cache_size': 4096, # float, optional. Specify the size of the kernel cache (in MB).
+    'kernel': 'linear', # Specifies the kernel type to be used in the algorithm. It must be one of ‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed’ or a callable. If none is given, ‘rbf’ will be used.
+    'class_weight': dataset.weight_per_class,
+    'C':100.0, # float, optional (default=1.0). Penalty parameter C of the error term.
+    'degree':3, # Degree of the polynomial kernel function (‘poly’). Ignored by all other kernels.
+    'gamma': 'auto', # float, optional. (default=’auto’) Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’.
+    'max_iter': -1, # int, optional (default=-1). Hard limit on iterations within solver, or -1 for no limit.
+    'tol': 0.001, # float, optional. (default=1e-3) Tolerance for stopping criterion.
+    'coef0': 0.0, # float, optional. (default=0.0) Independent term in kernel function. It is only significant in ‘poly’ and ‘sigmoid’.
+    'decision_function_shape': 'ovr', # ‘ovo’, ‘ovr’, default=’ovr’. Whether to return a one-vs-rest (‘ovr’) decision function of shape (n_samples, n_classes) as all other classifiers, or the original one-vs-one (‘ovo’) decision function of libsvm which has shape (n_samples, n_classes * (n_classes - 1) / 2). However, one-vs-one (‘ovo’) is always used as multi-class strategy.
+    'probability': False, # boolean, optional. (default=False) Whether to enable probability estimates. This must be enabled prior to calling fit, and will slow down that method.
+    'shrinking': True # boolean, optional. (default=True) Whether to use the shrinking heuristic.
+    }
 
-model = svm.SVC(**model_parameters)
+model = SVC(**model_parameters)
+
+#model = BaggingClassifier(
+#    verbose = 1,
+#    base_estimator=SVC(**model_parameters),
+#    n_estimators=8,
+#    max_samples = 1 / 8,
+#    bootstrap=False,
+#    n_jobs=-1,
+#    random_state=42)
 
 # Training
 print('Training...')
-
-#model.fit(
-#    X = dataset.X_train,
-#    y = dataset.y_train)
-
-early = EarlyStopping(
-    model,
-    max_n_estimators=1000,
-    scorer=partial(scorer, dataset.X_validate, dataset.y_validate),
-    monitor_score = "gmean",
-    patience = 25,
-    higher_is_better = True)
-
 start_time = time.time()
-early.fit(dataset.X_train, dataset.y_train)
+
+model.fit(
+    X = dataset.X_train,
+    y = dataset.y_train)
+
 elapsed_time_training = time.time() - start_time
 
 # Predicting
 print('Predicting...')
 start_time = time.time()
-y_pred = early.estimator.predict(dataset.X_test)
+y_pred = model.predict(dataset.X_test)
 elapsed_time_testing = time.time() - start_time
 
 # Analytics
-title = "RandomForest"
+title = "SVC (hyper weights WSMOTE Bagging)"
 save_path = "C:/Users/thoma/source/repos/PythonMachineLearning/PythonMachineLearning/Library/Results"
 print('Analyzing...')
 evaluator = Evaluator(title, save_path)
-evaluator.append_to_file(f'Best iteration: {early.best_iteration_}', "info.txt")
 evaluator.append_to_file(f'Training time (seconds): {elapsed_time_training}', "info.txt")
 evaluator.append_to_file(f'Testing time (seconds): {elapsed_time_testing}', "info.txt")
 evaluator.append_to_file(dataset_parameters, "dataset_parameters.txt")
 evaluator.append_to_file(model_parameters, "model_parameters.txt")
 evaluator.save_advanced_metrics(dataset.y_test, y_pred, dataset.class_labels, dataset.class_descriptions)
-evaluator.append_to_file(early.scores_, "metric_results.txt")
-evaluator.create_evaluation_metric_results(early.scores_, xlabel='number of trees', ylabel='metric score')
+#evaluator.append_to_file(eval_results, "metric_results.txt")
+#evaluator.create_evaluation_metric_results(eval_results, xlabel='number of trees', ylabel='metric score')
 evaluator.create_confusion_matrix(dataset.y_test, y_pred, dataset.class_labels, normalize = True)
 plt.show()

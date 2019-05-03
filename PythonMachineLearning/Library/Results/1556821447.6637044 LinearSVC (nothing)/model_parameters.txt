@@ -1,0 +1,10 @@
+verbose: 5
+random_state: 42
+C: 1.0
+dual: False
+intercept_scaling: 1
+loss: squared_hinge
+max_iter: 1000
+multi_class: ovr
+penalty: l2
+tol: 0.0001

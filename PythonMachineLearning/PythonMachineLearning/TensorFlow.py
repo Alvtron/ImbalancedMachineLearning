@@ -207,10 +207,11 @@ class EarlyStopByGmean(Callback):
 dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
     'sample_size': 0.02,
+    #'min_max_scaling': True,
     #'sampling_strategy': "SMOTE", # no significant improvement
     #'sampling_strategy': "over_and_under_sampling", # 10k and 20k shows promising for the first 8 classes, and 30-60% for class 9, but no hits on last class.
     #'sampling_strategy': "over_and_under_sampling_custom", # best result. 70% and 0% on two last classes, respectively.
-    'sampling_strategy': "WSMOTE", # 
+    'sampling_strategy': "WSMOTE2", # 
     #'sampling_strategy': None,
     'verbose': False}
 

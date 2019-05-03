@@ -21,11 +21,12 @@ def gmean_metric(y_true, y_pred):
 dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
     'sample_size': 0.02,
-    'sampling_strategy': "SMOTE",
+    #'sampling_strategy': "SMOTE",
     #'sampling_strategy': "over_and_under_sampling",
     #'sampling_strategy': "WSMOTE2", 
-    #'sampling_strategy': "WSMOTE4", 
-    #'sampling_strategy': None,
+    #'sampling_strategy': "WSMOTE4",
+    #'sampling_strategy': "UWSMOTE", 
+    'sampling_strategy': None,
     'verbose': False}
 
 dataset = Poker(**dataset_parameters)
@@ -73,7 +74,7 @@ y_pred = model.predict(dataset.X_test, prediction_type='Class')
 elapsed_time_testing = time.time() - start_time
 
 # Analytics
-title = "LightGBM (hyper weights)"
+title = "LightGBM (hyper weights dart)"
 
 eval_results = {
     'multi_logloss': model.evals_result_['valid_0']['multi_logloss'],

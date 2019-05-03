@@ -1,0 +1,15 @@
+verbose: True
+random_state: 42
+max_iter: -1
+n_jobs: -1
+max_mem_size: -1
+cache_size: 8192
+kernel: linear
+degree: 3
+gamma: auto
+coef0: 0.0
+C: 1.0
+tol: 0.001
+probability: False
+shrinking: False
+decision_function_shape: ovr

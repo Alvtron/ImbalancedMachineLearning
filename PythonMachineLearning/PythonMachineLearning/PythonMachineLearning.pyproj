@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3d74b006-f878-4d0b-9357-6808755779ca</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>LightGBM.py</StartupFile>
+    <StartupFile>CatBoost.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,11 +22,14 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="EasyEnsembleClassifier.py" />
+    <Compile Include="GradientBoostingClassifier.py" />
     <Compile Include="AdaBoost.py" />
     <Compile Include="CatBoost.py" />
     <Compile Include="LightGBM.py" />
     <Compile Include="LinearSVC.py" />
     <Compile Include="MultiClassificationTrainer.py" />
+    <Compile Include="BalancedRandomForestClassifier.py" />
     <Compile Include="RandomForest.py" />
     <Compile Include="SGD.py" />
     <Compile Include="SVC.py" />
@@ -35,8 +38,8 @@
     <Compile Include="TensorFlowMultiClassMetrics.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LightningSVM.py" />
     <Compile Include="ThunderSVM.py" />
-    <Compile Include="thundersvmScikit.py" />
     <Compile Include="XGBoost.py" />
   </ItemGroup>
   <ItemGroup>

@@ -2,14 +2,16 @@ from sklearn.base import ClassifierMixin, clone
 from collections import defaultdict
 import numpy as np
 import time
+from sklearn.linear_model import SGDClassifier
 
 class EarlyStopping(ClassifierMixin):
-    def __init__(self, estimator, max_n_estimators, scorer, monitor_score = "gmean", patience=10, higher_is_better=False, sample_weight = None):
+    def __init__(self, estimator, max_n_estimators, scorer, monitor_score = "gmean", patience=10, tolerance=0.001, higher_is_better=False, sample_weight = None):
         self.estimator = estimator
         self.max_n_estimators = max_n_estimators
         self.scorer = scorer
         self.monitor_score = monitor_score
         self.patience = patience
+        self.tolerance = tolerance
         self.higher_is_better = higher_is_better
         self.sample_weight = sample_weight
     
@@ -44,9 +46,16 @@ class EarlyStopping(ClassifierMixin):
             est.n_estimators = iteration
 
             if (self.sample_weight is None):
-                est.fit(X, y)
+                if isinstance(est, SGDClassifier):
+                    est.partial_fit(X, y, classes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+                else:
+                    est.fit(X, y)
             else:
-                est.fit(X, y, sample_weight = self.sample_weight)
+                if isinstance(est, SGDClassifier):
+                    est.fit(X, y, classes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], sample_weight = self.sample_weight)
+                else:
+                    est.fit(X, y, sample_weight = self.sample_weight)
+                
 
             eval_metrics = self.scorer(est)
 
@@ -63,8 +72,11 @@ class EarlyStopping(ClassifierMixin):
                 self.best_score_ = eval_metrics[self.monitor_score]
                 best_est = est
                 self.best_iteration_ = iteration
-                iterations_since_last_score = 0
                 print(f"{iteration} of {self.max_n_estimators}- {round(time.time() - start_time)}s{score_string} (best)")
+                # Only reset iterations_since_last_score if new best score is high enough (by tolerance)
+                if (((self.higher_is_better and eval_metrics[self.monitor_score] + self.tolerance > self.best_score_)
+                    or (not self.higher_is_better and eval_metrics[self.monitor_score] - self.tolerance < self.best_score_))):
+                    iterations_since_last_score = 0
             else:
                 print(f"{iteration} of {self.max_n_estimators}- {round(time.time() - start_time)}s{score_string}")
 

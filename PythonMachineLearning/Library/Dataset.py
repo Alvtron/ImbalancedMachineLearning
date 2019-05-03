@@ -6,6 +6,7 @@ import time
 import random
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
+from sklearn.preprocessing import MinMaxScaler
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler, SMOTE
 from imblearn.combine import SMOTEENN
@@ -150,7 +151,7 @@ class Poker:
             sm = SMOTE(random_state = random_state, sampling_strategy = 'auto', k_neighbors = 1, n_jobs=8)
         elif(sampling_strategy == "over_and_under_sampling"):
             class_count = y.value_counts()
-            number_of_samples_per_class = { 0:200000, 1:200000, 2:200000, 3:200000, 4:200000, 5:200000, 6:200000, 7:200000, 8:200000, 9:200000 } 
+            number_of_samples_per_class = { 0:1000, 1:1000, 2:1000, 3:1000, 4:1000, 5:1000, 6:1000, 7:1000, 8:1000, 9:1000 } 
             number_of_under_samples_per_class = {}
             number_of_over_samples_per_class = {}
             for index, value in class_count.iteritems():
@@ -192,6 +193,24 @@ class Poker:
             for index, value in class_count.iteritems():
                 number_of_samples_per_class.update({ index : value + math.floor((class_sum / value) * 0.4) })
             sm = SMOTE(random_state = random_state, sampling_strategy = number_of_samples_per_class, k_neighbors = 1, n_jobs=8)
+        elif(sampling_strategy == "UWSMOTE"):
+            class_count = y.value_counts()
+            class_sum = sum(class_count)
+            number_of_samples_per_class = {}
+            for index, value in class_count.iteritems():
+                number_of_samples_per_class.update({ index : math.floor(value*0.2) + math.floor((class_sum / value) * 0.2) })
+            number_of_under_samples_per_class = {}
+            number_of_over_samples_per_class = {}
+            for index, value in class_count.iteritems():
+                if (value > number_of_samples_per_class[index]):
+                    number_of_under_samples_per_class[index] = number_of_samples_per_class[index]
+                elif(value < number_of_samples_per_class[index]):
+                    number_of_over_samples_per_class[index] = number_of_samples_per_class[index]
+            rus = RandomUnderSampler(random_state = random_state, sampling_strategy = number_of_under_samples_per_class)
+            X_res, y_res = rus.fit_sample(X = X.values, y = y.values)
+            X = pd.DataFrame(data = X_res, columns = Poker.feature_labels)
+            y = pd.Series(data = y_res.flatten())
+            sm = SMOTE(random_state = random_state, sampling_strategy = number_of_over_samples_per_class, k_neighbors = 1, n_jobs=8)
         else:
             raise Exception("Sampling strategy does not exist.")
         X_res, y_res = sm.fit_sample(X = X.values, y = y.values)
@@ -201,7 +220,7 @@ class Poker:
         y = pd.Series(data = y_res.flatten())
         return X, y
 
-    def __init__(self, data_distribution = [0.2, 0.1, 0.7], sample_size = 0.05, sampling_strategy = None, verbose = False, random_state = 42):
+    def __init__(self, data_distribution = [0.2, 0.1, 0.7], sample_size = 0.05, sampling_strategy = None, min_max_scaling = False, verbose = False, random_state = 42):
         if (len(data_distribution) > 3 or len(data_distribution) < 2):
             raise ValueError("Data distribution must consist of 2 to 3 values.")
         if (sum(data_distribution) != 1.0):
@@ -228,6 +247,10 @@ class Poker:
                 print('Splitting data into train, validate and test set...')
             else:
                 print('Splitting data into train and test set...')
+
+        if (min_max_scaling is True):
+            scaler = MinMaxScaler()  # Default behavior is to scale to [0,1]
+            dataset[self.feature_labels] = scaler.fit_transform(dataset[self.feature_labels])
 
         # Split data set 
         X = dataset.drop('CLASS', axis=1)

@@ -1,0 +1,12 @@
+task_type,GPU
+thread_count,8
+classes_count,10
+num_trees,100000
+learning_rate,0.1
+max_depth,10
+l2_leaf_reg,1
+objective,MultiClass
+eval_metric,TotalF1
+custom_metric,Accuracy
+od_type,Iter
+od_wait,100

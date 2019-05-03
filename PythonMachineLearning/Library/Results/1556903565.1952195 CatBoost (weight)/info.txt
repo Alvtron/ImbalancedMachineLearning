@@ -1,0 +1,3 @@
+Best iteration: 1344
+Training time (seconds): 117.66537547111511
+Testing time (seconds): 34.27970266342163
