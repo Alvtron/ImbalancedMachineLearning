@@ -1,3 +1,0 @@
-optimizer: nadam
-loss: sparse_categorical_crossentropy
-metrics: [accuracy,<function f1 at 0x000001E9C91EB0D0>]

@@ -207,11 +207,11 @@ class EarlyStopByGmean(Callback):
 dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
     'sample_size': 0.02,
-    #'min_max_scaling': True,
-    #'sampling_strategy': "SMOTE", # no significant improvement
+    'min_max_scaling': False,
+    'sampling_strategy': "SMOTE", # no significant improvement
     #'sampling_strategy': "over_and_under_sampling", # 10k and 20k shows promising for the first 8 classes, and 30-60% for class 9, but no hits on last class.
     #'sampling_strategy': "over_and_under_sampling_custom", # best result. 70% and 0% on two last classes, respectively.
-    'sampling_strategy': "WSMOTE2", # 
+    #'sampling_strategy': "WSMOTE2", # 
     #'sampling_strategy': None,
     'verbose': False}
 
@@ -220,7 +220,7 @@ dataset = Poker(**dataset_parameters)
 model = Sequential()
 model.add(Dense(2 ** 10, input_shape=(dataset.X_train.shape[1],), name='input'))
 
-num_hidden_layers = 3
+num_hidden_layers = 4
 neuron_base = 2
 neuron_exponent = 10
 neuron_delta = 0
@@ -252,21 +252,23 @@ print(model.summary())
 # Training
 print('Training...')
 start_time = time.time()
-callback = [EarlyStopByGmean(verbose = True, patience=25, save_path='best_model.h5')]
-#EarlyStopping(monitor='val_loss', min_delta=0, patience=25, verbose=1, mode='auto'),
-#ModelCheckpoint('best_model.h5', monitor='val_loss', mode='auto', verbose=1, save_best_only=True)
 
+callback = [EarlyStopByGmean(verbose = True, patience=25, save_path='best_model.h5')]
 # Assign training data results to callable variable
 fetches = [
     tf.assign(callback[0].var_y_true, model.targets[0], validate_shape=False),
     tf.assign(callback[0].var_y_pred, model.outputs[0], validate_shape=False)]
 model._function_kwargs = {'fetches': fetches}
 
+#callback = [
+#    EarlyStopping(monitor='val_loss', min_delta=0, patience=25, verbose=1, mode='auto'),
+#    ModelCheckpoint('best_model.h5', monitor='val_loss', mode='auto', verbose=1, save_best_only=True)]
+
 model.fit(
     dataset.X_train.values,
     dataset.y_train.values,
     batch_size=4096,
-    epochs=100000,
+    epochs=10000,
     class_weight=dataset.weight_per_class,
     validation_data=(dataset.X_validate, dataset.y_validate),
     callbacks = callback)
@@ -285,22 +287,29 @@ elapsed_time_testing = time.time() - start_time
 y_pred = np.asarray([np.argmax(line) for line in predictions])
 
 # Analytics
+
 eval_results = {
     'accuracy': callback[0].val_accuracy,
-    'gmean': callback[0].val_gmean}
-title = "TensorFlow (4 layers - weights - WSMOTE)"
+    'gmean': callback[0].val_gmean,
+    'loss': model.history.history["val_loss"]}
+
+#eval_results = {
+#    'accuracy': model.history.history["val_acc"],
+#    'loss': model.history.history["val_loss"],
+#    }
+
+title = "TensorFlow (4 layers weights smote)"
 save_path = "C:/Users/thoma/source/repos/PythonMachineLearning/PythonMachineLearning/Library/Results"
 print('Analyzing...')
 evaluator = Evaluator(title, save_path)
 evaluator.append_to_file(f'Best iteration: {callback[0].best_epoch}', "info.txt")
+#evaluator.append_to_file(f'Best iteration: {len(model.history.history["val_loss"])}', "info.txt")
 evaluator.append_to_file(f'Training time (seconds): {elapsed_time_training}', "info.txt")
 evaluator.append_to_file(f'Testing time (seconds): {elapsed_time_testing}', "info.txt")
-evaluator.append_to_file(model.get_config(), "model_config.txt")
-evaluator.append_to_file(model.summary(), "model_summary.txt")
-evaluator.append_to_file(dataset_parameters, "dataset_parameters.txt")
-evaluator.append_to_file(model_parameters, "model_parameters.txt")
+evaluator.save_dict_to_file(dataset_parameters, "dataset_parameters.csv")
+evaluator.save_dict_to_file(model_parameters, "model_parameters.csv")
 evaluator.save_advanced_metrics(dataset.y_test, y_pred, dataset.class_labels, dataset.class_descriptions)
-evaluator.append_to_file(eval_results, "metric_results.txt")
+evaluator.save_eval_scores_to_file(eval_results, "metric_results.csv")
 evaluator.create_evaluation_metric_results(eval_results, xlabel='epochs', ylabel='metric score')
 evaluator.create_confusion_matrix(dataset.y_test, y_pred, dataset.class_labels, normalize = True)
 plt.show()

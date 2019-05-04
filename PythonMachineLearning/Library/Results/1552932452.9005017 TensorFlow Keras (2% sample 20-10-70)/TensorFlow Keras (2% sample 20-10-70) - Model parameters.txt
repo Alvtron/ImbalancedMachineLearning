@@ -1,3 +1,0 @@
-loss: <function focal_loss.<locals>.focal_loss_fixed at 0x0000027E394C3E18>
-optimizer: nadam
-metrics: [accuracy,<function f1 at 0x0000027E305FE0D0>]

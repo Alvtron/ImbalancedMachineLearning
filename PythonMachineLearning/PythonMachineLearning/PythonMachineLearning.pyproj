@@ -4,14 +4,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3d74b006-f878-4d0b-9357-6808755779ca</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>CatBoost.py</StartupFile>
+    <StartupFile>KNN.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>PythonMachineLearning</Name>
     <RootNamespace>PythonMachineLearning</RootNamespace>
-    <InterpreterId>Global|VisualStudio|machinelearning</InterpreterId>
+    <InterpreterId>Global|VisualStudio|tf-gpu</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,6 +27,7 @@
     <Compile Include="AdaBoost.py" />
     <Compile Include="CatBoost.py" />
     <Compile Include="LightGBM.py" />
+    <Compile Include="KNN.py" />
     <Compile Include="LinearSVC.py" />
     <Compile Include="MultiClassificationTrainer.py" />
     <Compile Include="BalancedRandomForestClassifier.py" />

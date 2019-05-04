@@ -1,3 +1,0 @@
-optimizer: adam
-loss: sparse_categorical_crossentropy
-metrics: [<function f1 at 0x00000218A0F9E0D0>]

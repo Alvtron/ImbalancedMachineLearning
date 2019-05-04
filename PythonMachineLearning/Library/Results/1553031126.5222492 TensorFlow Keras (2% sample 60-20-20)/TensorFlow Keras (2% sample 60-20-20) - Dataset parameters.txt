@@ -1,4 +1,0 @@
-data_distribution: [0.6,0.2,0.2]
-sample_size: 0.02
-sampling_strategy: over_and_under_sampling
-verbose: True

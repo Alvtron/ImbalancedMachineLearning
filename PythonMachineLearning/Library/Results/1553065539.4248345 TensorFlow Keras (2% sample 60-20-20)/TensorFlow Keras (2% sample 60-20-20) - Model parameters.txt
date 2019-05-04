@@ -1,3 +1,0 @@
-optimizer: <tensorflow.python.keras.optimizers.Adam object at 0x00000194209EFF98>
-loss: sparse_categorical_crossentropy
-metrics: [accuracy,<function fmeasure at 0x000001947BF8E6A8>]

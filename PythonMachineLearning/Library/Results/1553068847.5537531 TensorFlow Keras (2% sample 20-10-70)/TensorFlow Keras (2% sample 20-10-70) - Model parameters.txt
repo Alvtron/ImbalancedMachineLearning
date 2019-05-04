@@ -1,3 +1,0 @@
-optimizer: <tensorflow.python.keras.optimizers.Adadelta object at 0x0000020B1DE134E0>
-loss: sparse_categorical_crossentropy
-metrics: [accuracy,<function fmeasure at 0x0000020B1DD7D6A8>]

@@ -1,3 +1,0 @@
-optimizer: <tensorflow.python.keras.optimizers.SGD object at 0x000001BE1AB42AC8>
-loss: [<function focal_loss.<locals>.focal_loss_fixed at 0x000001BE76CC4EA0>]
-metrics: [accuracy,<function f1 at 0x000001BE6DDEE0D0>]

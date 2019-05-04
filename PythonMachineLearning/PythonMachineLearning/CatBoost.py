@@ -28,11 +28,11 @@ dataset_parameters = {
     'data_distribution': [0.2, 0.1, 0.7],
     'sample_size': 0.02,
     'min_max_scaling': True,
-    'sampling_strategy': "SMOTE",
+    #'sampling_strategy': "SMOTE",
     #'sampling_strategy': "over_and_under_sampling",
     #'sampling_strategy': "4SMOTE",
     #'sampling_strategy': "WSMOTE2",
-    #'sampling_strategy': None,
+    'sampling_strategy': None,
     'verbose': False}
 
 dataset = Poker(**dataset_parameters)
@@ -43,11 +43,11 @@ model_parameters = {
     'thread_count': 8,
     'classes_count': 10,
     'num_trees': 100000, # 1000, The maximum number of trees that can be built when solving machine learning problems.
-    'learning_rate': 0.1, # 0.03, The learning rate. Used for reducing the gradient step.
+    'learning_rate': 0.10, # 0.03, The learning rate. Used for reducing the gradient step.
     'max_depth': 10, # 6, Depth of the tree.
     'l2_leaf_reg': 1, # 3, L2 regularization coefficient. Used for leaf value calculation.
     'objective': 'MultiClass', # MultiClassOneVsAll, RMSE, The metric to use in training. The specified value also determines the machine learning problem to solve.
-    'eval_metric': 'TotalF1', #GeometricMean(), #"TotalF1", # Objective, The metric used for overfitting detection (if enabled) and best model selection (if enabled). 
+    'eval_metric': 'MultiClass', #GeometricMean(), #"TotalF1", # Objective, The metric used for overfitting detection (if enabled) and best model selection (if enabled). 
     'custom_metric':'Accuracy',
     'od_type': 'Iter',
     'od_wait': 100,
@@ -62,7 +62,7 @@ start_time = time.time()
 model.fit(
     X = dataset.X_train,
     y = dataset.y_train,
-    #sample_weight = dataset.weight_per_sample,
+    sample_weight = dataset.weight_per_sample,
     eval_set = [(dataset.X_validate, dataset.y_validate)],
     use_best_model=True,
     verbose = True)
@@ -76,12 +76,12 @@ elapsed_time_testing = time.time() - start_time
 
 # Analytics
 print('Analyzing...')
-title = "CatBoost (smote)"
+title = "CatBoost (weights smote)"
 
 eval_results = {
     'MultiClass': np.absolute(model.get_evals_result()['validation_0']['MultiClass']),
     'Accuracy': np.absolute(model.get_evals_result()['validation_0']['Accuracy']),
-    'F1': np.absolute(model.get_evals_result()['validation_0']['TotalF1']),
+    #'F1': np.absolute(model.get_evals_result()['validation_0']['TotalF1']),
     #'gmean': model.get_evals_result()['validation_0']['GeometricMean']
     }
 

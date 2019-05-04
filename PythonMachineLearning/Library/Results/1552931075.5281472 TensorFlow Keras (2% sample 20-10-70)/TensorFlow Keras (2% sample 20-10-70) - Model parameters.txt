@@ -1,3 +1,0 @@
-optimizer: adam
-loss: <function custom_loss.<locals>.loss at 0x0000027C3B133EA0>
-metrics: [<function f1 at 0x0000027C3225F0D0>]
