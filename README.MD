@@ -1,4 +1,4 @@
-# ImbalancedMachineLearning
+# Imbalanced Machine Learning with Python
 
 Here we train different machine learning algorithms with Python for extreme imbalanced classification.
 
